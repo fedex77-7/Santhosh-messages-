@@ -1,13 +1,522 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="ml" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santhosh Messages</title>
-    <link rel="stylesheet" href="style.css">
+    
     <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ================= PREMIUM MODERN THEME COLORS ================= */
+        :root[data-theme="light"] {
+            --bg-primary: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --bg-sidebar: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-color: #059669; /* Emerald Green */
+            --accent-hover: #047857;
+            --border-color: #e2e8f0;
+            --chat-bg: #eae6df; /* Classic WhatsApp Chat BG */
+            --msg-sent: #d9fdd3;
+            --msg-received: #ffffff;
+            --msg-text-sent: #111b21;
+            --msg-text-received: #111b21;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --neon-glow: none;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-primary: #0b141a; /* WhatsApp Dark Mode BG */
+            --bg-secondary: #111b21;
+            --bg-sidebar: #111b21;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #10b981; /* Neon Emerald Green */
+            --accent-hover: #34d399;
+            --border-color: #222e35;
+            --chat-bg: #0b141a;
+            --msg-sent: #005c4b; /* WhatsApp Dark Sent Message BG */
+            --msg-received: #202c33;
+            --msg-text-sent: #e9edef;
+            --msg-text-received: #e9edef;
+            --shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            --neon-glow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        /* ================= BASE STYLES ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ================= AUTH CONTAINER (LOGIN / SIGNUP) ================= */
+        .container {
+            background-color: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .brand-logo-area h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+            text-shadow: var(--neon-glow);
+        }
+
+        .brand-logo-area p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        button.btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--neon-glow);
+        }
+
+        button.btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* ================= CHAT CONTAINER LAYOUT ================= */
+        .chat-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            background-color: var(--bg-secondary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 320px;
+            height: 100%;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-brand h4 {
+            color: var(--accent-color);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: var(--neon-glow);
+        }
+
+        .sidebar-brand span {
+            font-size: 10px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            padding: 15px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 28px;
+            top: 28px;
+            color: var(--text-secondary);
+        }
+
+        .search-box input {
+            padding-left: 45px;
+            margin-bottom: 0;
+        }
+
+        .users-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* ഇൻഡിക്കേഷൻ കൃത്യമായി വലത്തേ അറ്റത്ത് വരാൻ */
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .user-item:hover, .user-item.active {
+            background-color: var(--bg-primary);
+        }
+
+        .user-meta-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            margin-right: 12px;
+            position: relative;
+        }
+
+        .user-avatar::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border: 2px solid var(--bg-sidebar);
+            border-radius: 50%;
+            bottom: 2px;
+            right: 2px;
+        }
+
+        .user-details h5 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Message Badges (വലത്തു വശത്ത് കാണിക്കുന്ന ഇൻഡിക്കേറ്റർ) */
+        .unread-badge {
+            background-color: #10b981;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Sidebar Footer (Profile / Settings Area) */
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-secondary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background-color: var(--bg-primary);
+            color: var(--accent-color);
+        }
+
+        /* ================= SETTINGS POPUP MODAL ================= */
+        .settings-panel {
+            position: absolute;
+            bottom: 70px;
+            left: 15px;
+            width: 290px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        /* Theme Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* REXO Website Link Button */
+        .rex-link-btn {
+            background-color: var(--bg-primary);
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .rex-link-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* ================= MAIN CHAT WINDOW ================= */
+        .chat-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 15px 25px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .message-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background-color: var(--chat-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Message Bubbles Styling */
+        .message {
+            max-width: 65%;
+            padding: 10px 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background-color: var(--msg-sent);
+            color: var(--msg-text-sent);
+            border-top-right-radius: 2px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background-color: var(--msg-received);
+            color: var(--msg-text-received);
+            border-top-left-radius: 2px;
+        }
+
+        /* Input area styling */
+        .chat-input-area {
+            padding: 15px 25px;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .send-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--neon-glow);
+        }
+
+        .send-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Mobile Menu Triggers */
+        .menu-btn, .close-btn {
+            display: none;
+        }
+
+        /* Screen Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                left: -100%;
+                transition: left 0.3s ease;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .menu-btn {
+                display: flex;
+                position: absolute;
+                left: 15px;
+                top: 18px;
+                z-index: 5;
+            }
+            .chat-header {
+                padding-left: 65px;
+            }
+            .close-btn {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -23,7 +532,7 @@
             <h2>Sign In</h2>
             <input type="text" id="login-username" placeholder="Username">
             <input type="password" id="login-password" placeholder="Password">
-            <button id="login-btn-submit">Login</button>
+            <button id="login-btn-submit" class="btn-submit">Login</button>
             <p style="margin-top: 15px; font-size: 14px;">Don't have an account? <a href="#" id="go-to-signup" style="color: #10b981; font-weight: 600; text-decoration: none;">Create a new account</a></p>
             <div id="error-message" style="display: none; color: red; margin-top: 10px; font-weight: 500;"></div>
         </div>
@@ -33,7 +542,7 @@
             <h2>Create Account</h2>
             <input type="text" id="signup-username" placeholder="Choose Username">
             <input type="password" id="signup-password" placeholder="Password (Min 6 chars)">
-            <button id="signup-btn-submit">Register</button>
+            <button id="signup-btn-submit" class="btn-submit">Register</button>
             <p style="margin-top: 15px; font-size: 14px;">Already have an account? <a href="#" id="go-to-login" style="color: #10b981; font-weight: 600; text-decoration: none;">Back to Login</a></p>
             <div id="signup-error-message" style="display: none; color: red; margin-top: 10px; font-weight: 500;"></div>
         </div>
@@ -43,7 +552,7 @@
     <div id="main-chat-container" class="chat-container" style="display: none;">
         
         <!-- Toggle Menu Button for Mobile -->
-        <button id="menu-toggle-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
+        <button id="menu-toggle-btn" class="action-btn menu-btn"><i class="fas fa-bars"></i></button>
 
         <!-- Sidebar Section -->
         <div id="chat-sidebar" class="sidebar">
@@ -52,35 +561,61 @@
                     <h4>SANTHOSH</h4>
                     <span>MESSENGER</span>
                 </div>
-                <button id="close-sidebar-btn" class="close-btn"><i class="fas fa-times"></i></button>
+                <button id="close-sidebar-btn" class="action-btn close-btn"><i class="fas fa-times"></i></button>
             </div>
+            
             <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
+                <i class="fas fa-search"></i>
                 <input type="text" id="search-user-input" placeholder="Search users...">
             </div>
+            
             <div id="active-users-list" class="users-list">
                 <!-- Active users will appear here dynamically -->
             </div>
+
+            <!-- Settings Popup Modal -->
+            <div id="settings-panel" class="settings-panel">
+                <div class="settings-header">
+                    <span>Settings</span>
+                    <button id="close-settings-btn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="settings-option">
+                    <span>Dark Theme</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle-switch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <!-- Rexo Site Button -->
+                <a href="http://rexointernational.dpdns.org" target="_blank" class="rex-link-btn">
+                    <i class="fas fa-globe"></i> Open Rexo International
+                </a>
+            </div>
+
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <i class="fas fa-user-circle" style="font-size: 20px;"></i>
+                    <i class="fas fa-user-circle" style="font-size: 22px; color: var(--accent-color);"></i>
                     <span id="current-logged-user">Username</span>
                 </div>
-                <button id="logout-btn">Logout</button>
+                <div class="footer-actions">
+                    <button id="settings-toggle-btn" class="action-btn" title="Settings"><i class="fas fa-cog"></i></button>
+                    <button id="logout-btn" class="action-btn" title="Logout" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
             </div>
         </div>
 
         <!-- Main Chat Window Area -->
         <div class="chat-window">
             <div class="chat-header">
-                <h2 id="chat-with-heading">Select a user to start chat</h2>
+                <div id="active-chat-avatar" class="user-avatar" style="display: none; width: 36px; height: 36px; font-size: 13px;">S</div>
+                <h2 id="chat-with-heading" style="font-size: 18px; font-weight: 600;">Select a user to start chat</h2>
             </div>
             <div id="chat-messages-box" class="message-container">
                 <!-- Chat messages will appear here dynamically -->
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chat-message-input" placeholder="Type a message..." disabled>
-                <button id="chat-send-btn" disabled><i class="fas fa-paper-plane"></i></button>
+                <button id="chat-send-btn" class="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
 
@@ -91,7 +626,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // തിരുത്തിയ ഫയർബേസ് കോൺഫിഗറേഷൻ (Database URL ഉൾപ്പെടുത്തിയത്)
+        // തിരുത്തിയ ഫയർബേസ് കോൺഫിഗറേഷൻ
         const firebaseConfig = {
             apiKey: "AIzaSyDXhvtxcmDVhScJwQu-0B4JI_pi2Ps5Ysg",
             authDomain: "mychatapp5643.firebaseapp.com",
@@ -112,7 +647,34 @@
         const loginSection = document.getElementById('login-section');
         const signupSection = document.getElementById('signup-section');
         const mainChatContainer = document.getElementById('main-chat-container');
+        const themeToggle = document.getElementById('theme-toggle-switch');
+        const settingsPanel = document.getElementById('settings-panel');
         
+        // --- THEME SWITCHER LOGIC ---
+        themeToggle.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        });
+
+        // Toggle Settings Panel
+        document.getElementById('settings-toggle-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsPanel.style.display = settingsPanel.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        document.getElementById('close-settings-btn').addEventListener('click', () => {
+            settingsPanel.style.display = 'none';
+        });
+
+        document.addEventListener('click', (e) => {
+            if(!settingsPanel.contains(e.target) && e.target.id !== 'settings-toggle-btn') {
+                settingsPanel.style.display = 'none';
+            }
+        });
+
         // Navigation between Login & Signup
         document.getElementById('go-to-signup').addEventListener('click', (e) => {
             e.preventDefault();
@@ -142,7 +704,6 @@
                 return;
             }
 
-            // പാസ്‌വേഡ് 6 അക്ഷരമുണ്ടോ എന്ന് പരിശോധിക്കുന്നു
             if(pWord.length < 6) {
                 errBox.innerText = "Password must be at least 6 characters long!";
                 errBox.style.display = 'block';
@@ -200,6 +761,7 @@
             selectedUser = "";
             mainChatContainer.style.display = 'none';
             authContainer.style.display = 'block';
+            document.getElementById('active-chat-avatar').style.display = 'none';
             document.getElementById('login-username').value = "";
             document.getElementById('login-password').value = "";
             document.getElementById('chat-with-heading').innerText = "Select a user to start chat";
@@ -208,8 +770,9 @@
             document.getElementById('chat-send-btn').disabled = true;
         });
 
-        // --- LOAD USERS LIST ---
+        // --- LOAD USERS LIST WITH UNREAD COUNT ---
         function loadUsersList() {
+            // ഉപഭോക്താക്കളുടെ വിവരങ്ങൾ ലഭിക്കാൻ
             database.ref('users').on('value', (snapshot) => {
                 const usersListDiv = document.getElementById('active-users-list');
                 usersListDiv.innerHTML = "";
@@ -219,8 +782,20 @@
                     if(name !== currentUser) {
                         const userItem = document.createElement('div');
                         userItem.classList.add('user-item');
+                        userItem.setAttribute('id', 'user-item-' + name);
                         if(name === selectedUser) userItem.classList.add('active');
-                        userItem.innerText = name;
+                        
+                        const firstLetter = name.charAt(0).toUpperCase();
+                        
+                        userItem.innerHTML = `
+                            <div class="user-meta-left">
+                                <div class="user-avatar">${firstLetter}</div>
+                                <div class="user-details">
+                                    <h5>${name}</h5>
+                                </div>
+                            </div>
+                            <div class="unread-badge" id="badge-${name}" style="display: none;">0</div>
+                        `;
                         
                         userItem.addEventListener('click', () => {
                             document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
@@ -230,25 +805,78 @@
                             document.getElementById('chat-sidebar').classList.remove('active');
                         });
                         usersListDiv.appendChild(userItem);
+
+                        // ഓരോ യൂസറിനും വന്നിട്ടുള്ള അൺറീഡ് മെസ്സേജുകളുടെ എണ്ണം ട്രാക്ക് ചെയ്യുന്നു
+                        listenForUnreadMessages(name);
                     }
                 });
+            });
+        }
+
+        // --- LISTEN FOR UNREAD MESSAGES ---
+        function listenForUnreadMessages(otherUser) {
+            const chatId = currentUser < otherUser ? currentUser + "_" + otherUser : otherUser + "_" + currentUser;
+            
+            database.ref('chats/' + chatId).on('value', (snapshot) => {
+                let unreadCount = 0;
+                
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    // അയച്ചയാൾ നമ്മൾ അല്ലാത്തതും എന്നാൽ 'read' സ്റ്റാറ്റസ് false ആയതുമായ മെസ്സേജുകൾ എണ്ണുന്നു
+                    if (data.sender === otherUser && data.read === false) {
+                        unreadCount++;
+                    }
+                });
+
+                const badge = document.getElementById('badge-' + otherUser);
+                if (badge) {
+                    if (unreadCount > 0 && selectedUser !== otherUser) {
+                        badge.innerText = unreadCount;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
             });
         }
 
         // --- START CHAT LOGIC ---
         function startChatWith(name) {
             selectedUser = name;
-            document.getElementById('chat-with-heading').innerText = "Chat with: " + selectedUser;
+            
+            const avatar = document.getElementById('active-chat-avatar');
+            avatar.innerText = name.charAt(0).toUpperCase();
+            avatar.style.display = 'flex';
+            
+            document.getElementById('chat-with-heading').innerText = selectedUser;
             document.getElementById('chat-message-input').disabled = false;
             document.getElementById('chat-send-btn').disabled = false;
             
+            // ചാറ്റ് തുറക്കുമ്പോൾ ആ യൂസറിലെ എല്ലാ മെസ്സേജുകളും 'read = true' എന്ന് അപ്‌ഡേറ്റ് ചെയ്യുന്നു
+            markMessagesAsRead(name);
             loadMessages();
+        }
+
+        // --- MARK MESSAGES AS READ ---
+        function markMessagesAsRead(otherUser) {
+            const chatId = currentUser < otherUser ? currentUser + "_" + otherUser : otherUser + "_" + currentUser;
+            
+            database.ref('chats/' + chatId).once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const key = childSnapshot.key;
+                    const data = childSnapshot.val();
+                    if (data.sender === otherUser && data.read === false) {
+                        database.ref('chats/' + chatId + '/' + key).update({ read: true });
+                    }
+                });
+            });
         }
 
         // --- LOAD MESSAGES ---
         function loadMessages() {
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
             
+            database.ref('chats/' + chatId).off();
             database.ref('chats/' + chatId).on('value', (snapshot) => {
                 const msgBox = document.getElementById('chat-messages-box');
                 msgBox.innerHTML = "";
@@ -262,6 +890,10 @@
                         msgDiv.classList.add('sent');
                     } else {
                         msgDiv.classList.add('received');
+                        // നമ്മൾ ചാറ്റിൽ തന്നെ ഉള്ളപ്പോഴാണ് മെസ്സേജ് വരുന്നതെങ്കിൽ അതിനെ റീഡ് ആക്കി മാറ്റുന്നു
+                        if (data.read === false) {
+                            database.ref('chats/' + chatId + '/' + childSnapshot.key).update({ read: true });
+                        }
                     }
                     
                     msgDiv.innerText = data.text;
@@ -271,7 +903,7 @@
             });
         }
 
-        // --- SEND MESSAGE LOGIC ---
+        // --- SEND MESSAGE LOGIC (With Read Status Property) ---
         document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
         document.getElementById('chat-message-input').addEventListener('keypress', (e) => {
             if(e.key === 'Enter') sendMessage();
@@ -286,7 +918,8 @@
             database.ref('chats/' + chatId).push({
                 sender: currentUser,
                 text: text,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                read: false // മെസ്സേജ് അയക്കുമ്പോൾ ഡിഫോൾട്ടായി 'read: false' എന്ന് സെറ്റ് ചെയ്യുന്നു
             }).then(() => {
                 document.getElementById('chat-message-input').value = "";
             });
@@ -301,4 +934,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
