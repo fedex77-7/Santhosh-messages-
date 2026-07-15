@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santhosh Messages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="auth-container" class="container">
+        <!-- App Title & Branding Header -->
+        <div class="brand-logo-area">
+            <h1>Santhosh Messages</h1>
+            <p>POWERED BY REXO INTERNATIONAL</p>
+        </div>
+        
+        <!-- --- LOGIN BOX --- -->
+        <div id="login-box">
+            <h2>Sign In</h2>
+            <input type="text" id="username" placeholder="Username" autocomplete="off">
+            <input type="password" id="password" placeholder="Password">
+            <button id="login-btn">Login</button>
+            <div id="error-message" style="display: none;"></div>
+            <p style="margin-top: 20px; font-size: 14px; color: #4b5563;">
+                Don't have an account? 
+                <a href="#" id="show-signup" style="color: #10b981; font-weight: 600; text-decoration: none;">Create a new account</a>
+            </p>
+        </div>
+
+        <!-- --- SIGNUP BOX --- -->
+        <div id="signup-box" style="display: none;">
+            <h2>Create Account</h2>
+            <input type="text" id="new-username" placeholder="Choose Username" autocomplete="off">
+            <input type="password" id="new-password" placeholder="Password">
+            <button id="signup-btn">Register</button>
+            <div id="signup-error-message" style="display: none;"></div>
+            <p style="margin-top: 20px; font-size: 14px; color: #4b5563;">
+                Already have an account? 
+                <a href="#" id="show-login" style="color: #10b981; font-weight: 600; text-decoration: none;">Back to Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- --- CHAT PAGE CONTAINER --- -->
+    <div id="chat-container-page" class="chat-container" style="display: none;">
+        <button id="menu-toggle" class="menu-btn"><i class="fas fa-bars"></i></button>
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <h4>Santhosh Messages</h4>
+                    <span>REXO INTERNATIONAL</span>
+                </div>
+                <button id="close-menu" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-users" placeholder="Search users...">
+            </div>
+            <div id="users-list" class="users-list"></div>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="current-user-display"></span>
+                </div>
+                <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+        <div class="chat-window">
+            <div class="chat-header">
+                <h2 id="chat-with-title">Select a user to chat</h2>
+            </div>
+            <div id="message-container" class="message-container"></div>
+            <div class="chat-input-area">
+                <input type="text" id="message-input" placeholder="Type a message..." disabled>
+                <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- പൂർണ്ണമായ ജാവാസ്ക്രിപ്റ്റ് കോഡ് നേരിട്ട് ഇവിടെ നൽകുന്നു -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ഫയർബേസ് കണക്ഷൻ ഡീറ്റെയിൽസ്[span_1](start_span)[span_1](end_span)
+        const firebaseConfig = {
+          apiKey: "AIzaSyDXhvtxcmDVhScJwQu-0B4JI_pi2Ps5Ysg",
+          authDomain: "mychatapp5643.firebaseapp.com",
+          projectId: "mychatapp5643",
+          storageBucket: "mychatapp5643.firebasestorage.app",
+          messagingSenderId: "328590556877",
+          appId: "1:328590556877:web:e16c3b31fc22375428f384",
+          measurementId: "G-BF11J6MH8Q",
+          databaseURL: "https://mychatapp5643-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let currentUser = localStorage.getItem('loggedInUser');
+        let activeChatUser = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const authContainer = document.getElementById("auth-container");
+            const chatContainerPage = document.getElementById("chat-container-page");
+            const loginBox = document.getElementById("login-box");
+            const signupBox = document.getElementById("signup-box");
+
+            // ലോഗിൻ സ്റ്റേറ്റ് ചെക്ക് ചെയ്യുക
+            if (currentUser) {
+                authContainer.style.display = "none";
+                chatContainerPage.style.display = "flex";
+                initChatPage();
+            } else {
+                authContainer.style.display = "block";
+                chatContainerPage.style.display = "none";
+            }
+
+            // പേജ് മാറ്റങ്ങൾ
+            document.getElementById("show-signup").addEventListener("click", (e) => { e.preventDefault(); loginBox.style.display = "none"; signupBox.style.display = "block"; });
+            document.getElementById("show-login").addEventListener("click", (e) => { e.preventDefault(); signupBox.style.display = "none"; loginBox.style.display = "block"; });
+            document.getElementById("login-btn").addEventListener("click", loginUser);
+            document.getElementById("signup-btn").addEventListener("click", registerUser);
+        });
+
+        async function loginUser() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const err = document.getElementById('error-message');
+            if (!u || !p) { err.style.display="block"; err.innerText="Please fill in all fields."; return; }
+            try {
+                const snapshot = await get(child(ref(db), `users/${u}`));
+                if (!snapshot.exists()) { err.style.display="block"; err.innerText="User not found!"; return; }
+                if (snapshot.val().password === p) {
+                    localStorage.setItem('loggedInUser', u);
+                    currentUser = u;
+                    location.reload(); // പേജ് റിഫ്രഷ് ചെയ്ത് ചാറ്റിലേക്ക് കയറുന്നു
+                } else { err.style.display="block"; err.innerText="Wrong password!"; }
+            } catch (e) { err.style.display="block"; err.innerText="Connection error."; }
+        }
+
+        async function registerUser() {
+            const u = document.getElementById('new-username').value.trim();
+            const p = document.getElementById('new-password').value.trim();
+            const err = document.getElementById('signup-error-message');
+            if (!u || !p) { err.style.display="block"; err.innerText="Please fill in all fields."; return; }
+            try {
+                const snapshot = await get(child(ref(db), `users/${u}`));
+                if (snapshot.exists()) { err.style.display="block"; err.innerText="Username taken!"; return; }
+                await set(ref(db, `users/${u}`), { password: p });
+                alert("Account created!"); 
+                document.getElementById("show-login").click();
+            } catch (e) { err.style.display="block"; err.innerText="Error, try again."; }
+        }
+
+        // ചാറ്റ് പേജ് റൺ ചെയ്യാനുള്ള ഫങ്ഷൻ
+        function initChatPage() {
+            const sidebar = document.getElementById("sidebar");
+            document.getElementById("current-user-display").innerText = currentUser;
+
+            document.getElementById("menu-toggle").addEventListener("click", () => sidebar.classList.add("active"));
+            document.getElementById("close-menu").addEventListener("click", () => sidebar.classList.remove("active"));
+
+            document.getElementById("logout-btn").addEventListener("click", () => {
+                localStorage.removeItem('loggedInUser');
+                location.reload();
+            });
+
+            document.getElementById("search-users").addEventListener("input", (e) => {
+                const query = e.target.value.toLowerCase();
+                document.querySelectorAll(".user-item").forEach(item => {
+                    const name = item.getAttribute("data-username");
+                    item.style.display = name.includes(query) ? "block" : "none";
+                });
+            });
+
+            loadUsersList();
+            document.getElementById("send-btn").addEventListener("click", sendMessage);
+            document.getElementById("message-input").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendMessage(); });
+        }
+
+        function loadUsersList() {
+            const usersRef = ref(db, 'users');
+            onValue(usersRef, (snapshot) => {
+                const listDiv = document.getElementById("users-list");
+                listDiv.innerHTML = "";
+                if (snapshot.exists()) {
+                    Object.keys(snapshot.val()).forEach(user => {
+                        if (user !== currentUser) {
+                            const item = document.createElement("div");
+                            item.classList.add("user-item");
+                            item.innerText = user;
+                            item.setAttribute("data-username", user.toLowerCase());
+                            item.addEventListener("click", () => startChat(user, item));
+                            listDiv.appendChild(item);
+                        }
+                    });
+                }
+            });
+        }
+
+        function startChat(targetUser, element) {
+            activeChatUser = targetUser;
+            document.getElementById("chat-with-title").innerText = `Chat with ${targetUser}`;
+            document.getElementById("message-input").disabled = false;
+            document.getElementById("send-btn").disabled = false;
+            
+            document.querySelectorAll(".user-item").forEach(i => i.classList.remove("active"));
+            element.classList.add("active");
+            document.getElementById("sidebar").classList.remove("active");
+
+            loadMessages();
+        }
+
+        function loadMessages() {
+            const chatRoomId = [currentUser, activeChatUser].sort().join("_");
+            const msgRef = ref(db, `chats/${chatRoomId}`);
+            
+            onValue(msgRef, (snapshot) => {
+                const container = document.getElementById("message-container");
+                container.innerHTML = "";
+                if (snapshot.exists()) {
+                    Object.values(snapshot.val()).forEach(msg => {
+                        const div = document.createElement("div");
+                        div.classList.add("message", msg.sender === currentUser ? "sent" : "received");
+                        div.innerText = msg.text;
+                        container.appendChild(div);
+                    });
+                    container.scrollTop = container.scrollHeight;
+                }
+            });
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById("message-input");
+            const text = input.value.trim();
+            if (!text || !activeChatUser) return;
+
+            const chatRoomId = [currentUser, activeChatUser].sort().join("_");
+            const newMsgRef = push(ref(db, `chats/${chatRoomId}`));
+            
+            await set(newMsgRef, {
+                sender: currentUser,
+                text: text,
+                timestamp: Date.now()
+            });
+            input.value = "";
+        }
+    </script>
+</body>
+</html>
