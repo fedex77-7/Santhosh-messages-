@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santhosh Messages</title>
+    <title>Santhosh Messages Pro</title>
     
     <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -66,7 +66,7 @@
             overflow: hidden;
         }
 
-        /* ================= AUTH CONTAINER (LOGIN / SIGNUP) ================= */
+        /* ================= AUTH CONTAINER ================= */
         .container {
             background-color: var(--bg-secondary);
             border-radius: 20px;
@@ -195,7 +195,7 @@
         .user-item {
             display: flex;
             align-items: center;
-            justify-content: space-between; /* ഇൻഡിക്കേഷൻ കൃത്യമായി വലത്തേ അറ്റത്ത് വരാൻ */
+            justify-content: space-between;
             padding: 12px 15px;
             border-radius: 12px;
             cursor: pointer;
@@ -225,16 +225,18 @@
             position: relative;
         }
 
-        .user-avatar::after {
+        /* Active Green Dot Indicator (Instagram Model) */
+        .user-avatar.online-dot::after {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #10b981;
+            width: 12px;
+            height: 12px;
+            background-color: #10b981; /* Glowing Active Green */
             border: 2px solid var(--bg-sidebar);
             border-radius: 50%;
-            bottom: 2px;
-            right: 2px;
+            bottom: 1px;
+            right: 1px;
+            box-shadow: 0 0 5px #10b981;
         }
 
         .user-details h5 {
@@ -242,7 +244,14 @@
             font-weight: 600;
         }
 
-        /* Message Badges (വലത്തു വശത്ത് കാണിക്കുന്ന ഇൻഡിക്കേറ്റർ) */
+        /* Message Badges (WhatsApp Model) */
+        .badge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
         .unread-badge {
             background-color: #10b981;
             color: white;
@@ -258,7 +267,7 @@
             box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
         }
 
-        /* Sidebar Footer (Profile / Settings Area) */
+        /* Sidebar Footer */
         .sidebar-footer {
             padding: 15px;
             border-top: 1px solid var(--border-color);
@@ -378,7 +387,7 @@
             transform: translateX(22px);
         }
 
-        /* REXO Website Link Button */
+        /* Rexo Web Link Button */
         .rex-link-btn {
             background-color: var(--bg-primary);
             color: var(--accent-color);
@@ -418,6 +427,11 @@
             gap: 15px;
         }
 
+        .active-user-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         .message-container {
             flex: 1;
             overflow-y: auto;
@@ -428,10 +442,10 @@
             gap: 15px;
         }
 
-        /* Message Bubbles Styling */
+        /* Message Bubbles Styling with Time integration */
         .message {
-            max-width: 65%;
-            padding: 10px 16px;
+            max-width: 60%;
+            padding: 8px 14px 20px 14px; /* അടിയിൽ ടൈം വെക്കാൻ പാഡിങ് കൂട്ടി */
             border-radius: 16px;
             font-size: 15px;
             line-height: 1.5;
@@ -452,6 +466,21 @@
             background-color: var(--msg-received);
             color: var(--msg-text-received);
             border-top-left-radius: 2px;
+        }
+
+        /* Time Stamp positioning inside bubbles (WhatsApp style) */
+        .msg-time {
+            font-size: 10px;
+            color: var(--text-secondary);
+            position: absolute;
+            bottom: 4px;
+            right: 10px;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .message.sent .msg-time {
+            color: #515c61;
         }
 
         /* Input area styling */
@@ -487,12 +516,11 @@
             background-color: var(--accent-hover);
         }
 
-        /* Mobile Menu Triggers */
+        /* Mobile Responsive */
         .menu-btn, .close-btn {
             display: none;
         }
 
-        /* Screen Responsiveness */
         @media (max-width: 768px) {
             .sidebar {
                 position: absolute;
@@ -520,24 +548,24 @@
 </head>
 <body>
 
-    <!-- ================= AUTH CONTAINER (LOGIN / SIGNUP) ================= -->
+    <!-- ================= AUTH CONTAINER ================= -->
     <div id="auth-container" class="container">
         <div class="brand-logo-area">
             <h1>Santhosh Messages</h1>
             <p>POWERED BY REXO INTERNATIONAL</p>
         </div>
 
-        <!-- LOGIN FORM -->
+        <!-- LOGIN SECTION -->
         <div id="login-section">
             <h2>Sign In</h2>
             <input type="text" id="login-username" placeholder="Username">
             <input type="password" id="login-password" placeholder="Password">
             <button id="login-btn-submit" class="btn-submit">Login</button>
-            <p style="margin-top: 15px; font-size: 14px;">Don't have an account? <a href="#" id="go-to-signup" style="color: #10b981; font-weight: 600; text-decoration: none;">Create a new account</a></p>
+            <p style="margin-top: 15px; font-size: 14px;">Don't have an account? <a href="#" id="go-to-signup" style="color: #10b981; font-weight: 600; text-decoration: none;">Create account</a></p>
             <div id="error-message" style="display: none; color: red; margin-top: 10px; font-weight: 500;"></div>
         </div>
 
-        <!-- SIGNUP FORM -->
+        <!-- SIGNUP SECTION -->
         <div id="signup-section" style="display: none;">
             <h2>Create Account</h2>
             <input type="text" id="signup-username" placeholder="Choose Username">
@@ -551,10 +579,9 @@
     <!-- ================= CHAT CONTAINER ================= -->
     <div id="main-chat-container" class="chat-container" style="display: none;">
         
-        <!-- Toggle Menu Button for Mobile -->
         <button id="menu-toggle-btn" class="action-btn menu-btn"><i class="fas fa-bars"></i></button>
 
-        <!-- Sidebar Section -->
+        <!-- Sidebar -->
         <div id="chat-sidebar" class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-brand">
@@ -564,16 +591,17 @@
                 <button id="close-sidebar-btn" class="action-btn close-btn"><i class="fas fa-times"></i></button>
             </div>
             
+            <!-- Privacy Search Area -->
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search-user-input" placeholder="Search users...">
+                <input type="text" id="search-user-input" placeholder="Type exact username & press Enter...">
             </div>
             
             <div id="active-users-list" class="users-list">
-                <!-- Active users will appear here dynamically -->
+                <!-- Chatted users / search results will render here -->
             </div>
 
-            <!-- Settings Popup Modal -->
+            <!-- Settings Modal -->
             <div id="settings-panel" class="settings-panel">
                 <div class="settings-header">
                     <span>Settings</span>
@@ -586,7 +614,6 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <!-- Rexo Site Button -->
                 <a href="http://rexointernational.dpdns.org" target="_blank" class="rex-link-btn">
                     <i class="fas fa-globe"></i> Open Rexo International
                 </a>
@@ -604,14 +631,17 @@
             </div>
         </div>
 
-        <!-- Main Chat Window Area -->
+        <!-- Chat Window -->
         <div class="chat-window">
             <div class="chat-header">
-                <div id="active-chat-avatar" class="user-avatar" style="display: none; width: 36px; height: 36px; font-size: 13px;">S</div>
-                <h2 id="chat-with-heading" style="font-size: 18px; font-weight: 600;">Select a user to start chat</h2>
+                <div id="active-chat-avatar" class="user-avatar" style="display: none; width: 36px; height: 36px; font-size: 13px;"></div>
+                <div>
+                    <h2 id="chat-with-heading" style="font-size: 16px; font-weight: 600;">Select a user to start chat</h2>
+                    <span id="chat-user-status" class="active-user-status"></span>
+                </div>
             </div>
             <div id="chat-messages-box" class="message-container">
-                <!-- Chat messages will appear here dynamically -->
+                <!-- Messages -->
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chat-message-input" placeholder="Type a message..." disabled>
@@ -621,12 +651,11 @@
 
     </div>
 
-    <!-- ================= FIREBASE & APP SCRIPT ================= -->
+    <!-- ================= FIREBASE & SCRIPT ================= -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // തിരുത്തിയ ഫയർബേസ് കോൺഫിഗറേഷൻ
         const firebaseConfig = {
             apiKey: "AIzaSyDXhvtxcmDVhScJwQu-0B4JI_pi2Ps5Ysg",
             authDomain: "mychatapp5643.firebaseapp.com",
@@ -638,28 +667,27 @@
             measurementId: "G-BF11J6MH8Q"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // DOM Elements
+        // UI DOM Elements
         const authContainer = document.getElementById('auth-container');
         const loginSection = document.getElementById('login-section');
         const signupSection = document.getElementById('signup-section');
         const mainChatContainer = document.getElementById('main-chat-container');
         const themeToggle = document.getElementById('theme-toggle-switch');
         const settingsPanel = document.getElementById('settings-panel');
-        
-        // --- THEME SWITCHER LOGIC ---
+        const searchInput = document.getElementById('search-user-input');
+
+        let currentUser = "";
+        let selectedUser = "";
+        let chattedUsers = []; // നിലവിൽ മുൻപ് സംസാരിച്ച യൂസർമാരുടെ ലിസ്റ്റ്
+
+        // Theme Toggle
         themeToggle.addEventListener('change', (e) => {
-            if(e.target.checked) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-            }
+            document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
         });
 
-        // Toggle Settings Panel
         document.getElementById('settings-toggle-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             settingsPanel.style.display = settingsPanel.style.display === 'flex' ? 'none' : 'flex';
@@ -675,24 +703,18 @@
             }
         });
 
-        // Navigation between Login & Signup
         document.getElementById('go-to-signup').addEventListener('click', (e) => {
             e.preventDefault();
             loginSection.style.display = 'none';
             signupSection.style.display = 'block';
-            document.getElementById('signup-error-message').style.display = 'none';
         });
         document.getElementById('go-to-login').addEventListener('click', (e) => {
             e.preventDefault();
             signupSection.style.display = 'none';
             loginSection.style.display = 'block';
-            document.getElementById('error-message').style.display = 'none';
         });
 
-        let currentUser = "";
-        let selectedUser = "";
-
-        // --- SIGNUP LOGIC (With 6 Character Password Rule) ---
+        // --- SIGNUP LOGIC ---
         document.getElementById('signup-btn-submit').addEventListener('click', () => {
             const uName = document.getElementById('signup-username').value.trim().toLowerCase();
             const pWord = document.getElementById('signup-password').value.trim();
@@ -715,14 +737,15 @@
                     errBox.innerText = "Username already taken!";
                     errBox.style.display = 'block';
                 } else {
-                    database.ref('users/' + uName).set({ password: pWord })
-                    .then(() => {
+                    database.ref('users/' + uName).set({ 
+                        password: pWord,
+                        online: false,
+                        lastSeen: Date.now()
+                    }).then(() => {
                         alert("Account created successfully! Please login.");
                         signupSection.style.display = 'none';
                         loginSection.style.display = 'block';
                         errBox.style.display = 'none';
-                        document.getElementById('signup-username').value = "";
-                        document.getElementById('signup-password').value = "";
                     });
                 }
             });
@@ -747,7 +770,12 @@
                     mainChatContainer.style.display = 'flex';
                     document.getElementById('current-logged-user').innerText = currentUser;
                     errBox.style.display = 'none';
-                    loadUsersList();
+                    
+                    // സെറ്റ് ആക്ടീവ് സ്റ്റാറ്റസ്
+                    setUserActiveStatus(true);
+                    
+                    // ലോഡ് ലിസ്റ്റ്
+                    loadChattedUsersList();
                 } else {
                     errBox.innerText = "Invalid Username or Password!";
                     errBox.style.display = 'block';
@@ -755,74 +783,165 @@
             });
         });
 
+        // --- USER ACTIVE STATUS SYSTEM (Instagram Model) ---
+        function setUserActiveStatus(status) {
+            if(currentUser) {
+                database.ref('users/' + currentUser).update({
+                    online: status,
+                    lastSeen: Date.now()
+                });
+            }
+        }
+
+        // നമ്മൾ പേജ് ക്ലോസ് ചെയ്യുകയോ മാറുകയോ ചെയ്താൽ ഓഫ്‌ലൈൻ ആക്കാൻ
+        window.addEventListener('beforeunload', () => {
+            setUserActiveStatus(false);
+        });
+
         // --- LOGOUT LOGIC ---
         document.getElementById('logout-btn').addEventListener('click', () => {
+            setUserActiveStatus(false);
             currentUser = "";
             selectedUser = "";
             mainChatContainer.style.display = 'none';
             authContainer.style.display = 'block';
-            document.getElementById('active-chat-avatar').style.display = 'none';
-            document.getElementById('login-username').value = "";
-            document.getElementById('login-password').value = "";
             document.getElementById('chat-with-heading').innerText = "Select a user to start chat";
+            document.getElementById('chat-user-status').innerText = "";
             document.getElementById('chat-messages-box').innerHTML = "";
             document.getElementById('chat-message-input').disabled = true;
             document.getElementById('chat-send-btn').disabled = true;
         });
 
-        // --- LOAD USERS LIST WITH UNREAD COUNT ---
-        function loadUsersList() {
-            // ഉപഭോക്താക്കളുടെ വിവരങ്ങൾ ലഭിക്കാൻ
-            database.ref('users').on('value', (snapshot) => {
-                const usersListDiv = document.getElementById('active-users-list');
-                usersListDiv.innerHTML = "";
-                
-                snapshot.forEach((childSnapshot) => {
-                    const name = childSnapshot.key;
-                    if(name !== currentUser) {
-                        const userItem = document.createElement('div');
-                        userItem.classList.add('user-item');
-                        userItem.setAttribute('id', 'user-item-' + name);
-                        if(name === selectedUser) userItem.classList.add('active');
-                        
-                        const firstLetter = name.charAt(0).toUpperCase();
-                        
-                        userItem.innerHTML = `
-                            <div class="user-meta-left">
-                                <div class="user-avatar">${firstLetter}</div>
-                                <div class="user-details">
-                                    <h5>${name}</h5>
-                                </div>
-                            </div>
-                            <div class="unread-badge" id="badge-${name}" style="display: none;">0</div>
-                        `;
-                        
-                        userItem.addEventListener('click', () => {
-                            document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
-                            userItem.classList.add('active');
-                            
-                            startChatWith(name);
-                            document.getElementById('chat-sidebar').classList.remove('active');
-                        });
-                        usersListDiv.appendChild(userItem);
-
-                        // ഓരോ യൂസറിനും വന്നിട്ടുള്ള അൺറീഡ് മെസ്സേജുകളുടെ എണ്ണം ട്രാക്ക് ചെയ്യുന്നു
-                        listenForUnreadMessages(name);
+        // --- LOAD ONLY CHATTED USERS (പഴയ മെസ്സേജ് അയച്ചവർ മാത്രം) ---
+        function loadChattedUsersList() {
+            // ആദ്യം നമുക്ക് ഏതൊക്കെ റൂമിൽ മെസ്സേജ് നടന്നിട്ടുണ്ടെന്ന് നോക്കാം
+            database.ref('chats').on('value', (snapshot) => {
+                chattedUsers = [];
+                snapshot.forEach((chatRoom) => {
+                    const roomName = chatRoom.key;
+                    if(roomName.includes(currentUser)) {
+                        const otherPerson = roomName.replace(currentUser, "").replace("_", "");
+                        if(!chattedUsers.includes(otherPerson)) {
+                            chattedUsers.push(otherPerson);
+                        }
                     }
                 });
+                renderSidebarList();
             });
         }
 
-        // --- LISTEN FOR UNREAD MESSAGES ---
+        // --- RENDER SIDEBAR USERS ---
+        function renderSidebarList(searchedUser = null) {
+            const usersListDiv = document.getElementById('active-users-list');
+            usersListDiv.innerHTML = "";
+
+            // ഒന്നുകിൽ സെർച്ച് ചെയ്ത് കിട്ടിയ ആൾ, അല്ലെങ്കിൽ മുൻപ് സംസാരിച്ചവരുടെ ലിസ്റ്റ്
+            const finalDisplayList = searchedUser ? [searchedUser] : chattedUsers;
+
+            if (finalDisplayList.length === 0) {
+                usersListDiv.innerHTML = `<div style="text-align: center; color: var(--text-secondary); margin-top: 20px; font-size: 13px;">No active chats. Search username to start.</div>`;
+                return;
+            }
+
+            finalDisplayList.forEach((name) => {
+                if(name === currentUser) return;
+
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.setAttribute('id', 'user-item-' + name);
+                if(name === selectedUser) userItem.classList.add('active');
+
+                const firstLetter = name.charAt(0).toUpperCase();
+
+                userItem.innerHTML = `
+                    <div class="user-meta-left">
+                        <div class="user-avatar" id="avatar-status-${name}">${firstLetter}</div>
+                        <div class="user-details">
+                            <h5>${name}</h5>
+                        </div>
+                    </div>
+                    <div class="badge-container">
+                        <div class="unread-badge" id="badge-${name}" style="display: none;">0</div>
+                    </div>
+                `;
+
+                userItem.addEventListener('click', () => {
+                    document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
+                    userItem.classList.add('active');
+                    startChatWith(name);
+                });
+
+                usersListDiv.appendChild(userItem);
+
+                // ഓൺലൈൻ പച്ച വട്ടം കാണിക്കാനുള്ള ലിസണർ (Instagram active status)
+                trackOnlineStatus(name);
+                
+                // അൺറീഡ് മെസ്സേജ് ബാഡ്ജ്
+                listenForUnreadMessages(name);
+            });
+        }
+
+        // --- ONLINE STATUS TRACKER (Real-time update in sidebar) ---
+        function trackOnlineStatus(username) {
+            database.ref('users/' + username).on('value', (snapshot) => {
+                const userObj = snapshot.val();
+                const avatarDiv = document.getElementById('avatar-status-' + username);
+                if(avatarDiv) {
+                    if(userObj && userObj.online === true) {
+                        avatarDiv.classList.add('online-dot');
+                    } else {
+                        avatarDiv.classList.remove('online-dot');
+                    }
+                }
+                
+                // ചാറ്റ് വിൻഡോ തുറന്നു വെച്ചിരിക്കുകയാണെങ്കിൽ ടോപ്പിൽ സ്റ്റാറ്റസ് മാറ്റാൻ
+                if (selectedUser === username) {
+                    updateHeaderStatus(userObj);
+                }
+            });
+        }
+
+        function updateHeaderStatus(userObj) {
+            const statusSpan = document.getElementById('chat-user-status');
+            if (userObj && userObj.online === true) {
+                statusSpan.innerHTML = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-circle" style="font-size:8px;"></i> Active now</span>`;
+            } else if (userObj && userObj.lastSeen) {
+                const dateStr = formatTime(userObj.lastSeen);
+                statusSpan.innerText = "Last active at " + dateStr;
+            } else {
+                statusSpan.innerText = "Offline";
+            }
+        }
+
+        // --- PRIVACY SEARCH IMPLEMENTATION (Exact search on Enter) ---
+        searchInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                const searchQuery = searchInput.value.trim().toLowerCase();
+                if(!searchQuery) {
+                    // സെർച്ച് ബോക്സ് കാലിയാണെങ്കിൽ വീണ്ടും പഴയ ലിസ്റ്റ് കാണിക്കുക
+                    renderSidebarList();
+                    return;
+                }
+
+                // ഫയർബേസിൽ ആ കൃത്യം പേരുള്ള യൂസർ ഉണ്ടോ എന്ന് നോക്കുന്നു
+                database.ref('users/' + searchQuery).once('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        // അങ്ങനൊരു യൂസറുണ്ടെങ്കിൽ അവരെ മാത്രം ലിസ്റ്റിൽ താഴെ കാണിക്കും
+                        renderSidebarList(searchQuery);
+                    } else {
+                        alert("User not found! Enter correct exact username.");
+                    }
+                });
+            }
+        });
+
+        // --- UNREAD MESSAGES DETECTOR ---
         function listenForUnreadMessages(otherUser) {
             const chatId = currentUser < otherUser ? currentUser + "_" + otherUser : otherUser + "_" + currentUser;
-            
             database.ref('chats/' + chatId).on('value', (snapshot) => {
                 let unreadCount = 0;
-                
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
-                    // അയച്ചയാൾ നമ്മൾ അല്ലാത്തതും എന്നാൽ 'read' സ്റ്റാറ്റസ് false ആയതുമായ മെസ്സേജുകൾ എണ്ണുന്നു
                     if (data.sender === otherUser && data.read === false) {
                         unreadCount++;
                     }
@@ -840,7 +959,7 @@
             });
         }
 
-        // --- START CHAT LOGIC ---
+        // --- START CHAT ---
         function startChatWith(name) {
             selectedUser = name;
             
@@ -852,15 +971,18 @@
             document.getElementById('chat-message-input').disabled = false;
             document.getElementById('chat-send-btn').disabled = false;
             
-            // ചാറ്റ് തുറക്കുമ്പോൾ ആ യൂസറിലെ എല്ലാ മെസ്സേജുകളും 'read = true' എന്ന് അപ്‌ഡേറ്റ് ചെയ്യുന്നു
+            // ആക്ടീവ് യൂസറുടെ ഓൺലൈൻ സ്റ്റാറ്റസ് ഹെഡ്ഡറിൽ കാണിക്കാൻ
+            database.ref('users/' + name).once('value', (snapshot) => {
+                updateHeaderStatus(snapshot.val());
+            });
+
             markMessagesAsRead(name);
             loadMessages();
         }
 
-        // --- MARK MESSAGES AS READ ---
+        // --- MARK READ STATUS ---
         function markMessagesAsRead(otherUser) {
             const chatId = currentUser < otherUser ? currentUser + "_" + otherUser : otherUser + "_" + currentUser;
-            
             database.ref('chats/' + chatId).once('value', (snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     const key = childSnapshot.key;
@@ -872,10 +994,9 @@
             });
         }
 
-        // --- LOAD MESSAGES ---
+        // --- LOAD MESSAGES WITH TIMESTAMP ---
         function loadMessages() {
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
-            
             database.ref('chats/' + chatId).off();
             database.ref('chats/' + chatId).on('value', (snapshot) => {
                 const msgBox = document.getElementById('chat-messages-box');
@@ -890,20 +1011,26 @@
                         msgDiv.classList.add('sent');
                     } else {
                         msgDiv.classList.add('received');
-                        // നമ്മൾ ചാറ്റിൽ തന്നെ ഉള്ളപ്പോഴാണ് മെസ്സേജ് വരുന്നതെങ്കിൽ അതിനെ റീഡ് ആക്കി മാറ്റുന്നു
                         if (data.read === false) {
                             database.ref('chats/' + chatId + '/' + childSnapshot.key).update({ read: true });
                         }
                     }
                     
-                    msgDiv.innerText = data.text;
+                    // സമയം ഫോർമാറ്റ് ചെയ്യുന്നു (WhatsApp Style)
+                    const timeString = formatTime(data.timestamp);
+                    
+                    msgDiv.innerHTML = `
+                        ${data.text}
+                        <span class="msg-time">${timeString}</span>
+                    `;
+                    
                     msgBox.appendChild(msgDiv);
                 });
                 msgBox.scrollTop = msgBox.scrollHeight;
             });
         }
 
-        // --- SEND MESSAGE LOGIC (With Read Status Property) ---
+        // --- SEND MESSAGE ---
         document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
         document.getElementById('chat-message-input').addEventListener('keypress', (e) => {
             if(e.key === 'Enter') sendMessage();
@@ -919,13 +1046,25 @@
                 sender: currentUser,
                 text: text,
                 timestamp: Date.now(),
-                read: false // മെസ്സേജ് അയക്കുമ്പോൾ ഡിഫോൾട്ടായി 'read: false' എന്ന് സെറ്റ് ചെയ്യുന്നു
+                read: false
             }).then(() => {
                 document.getElementById('chat-message-input').value = "";
             });
         }
 
-        // --- MOBILE SIDEBAR TOGGLE ---
+        // --- Helper Function: Time Formatting ---
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 വിനെ 12 ആക്കുന്നു
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+
+        // Mobile Actions
         document.getElementById('menu-toggle-btn').addEventListener('click', () => {
             document.getElementById('chat-sidebar').classList.add('active');
         });
@@ -934,4 +1073,4 @@
         });
     </script>
 </body>
-    </html>
+                </html>
