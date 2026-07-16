@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Santhosh Message</title>
+    <title>Santhosh Messages</title>
     
     <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -124,77 +124,25 @@
             cursor: pointer;
         }
 
-        /* ================= GOOGLE LOGIN BUTTON ================= */
+        /* Premium Google Button Styling */
         .btn-google {
             width: 100%;
-            padding: 11px;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            padding: 12px;
+            background-color: #4285F4;
+            color: white;
+            border: none;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
+            margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 14px;
-            transition: background-color 0.2s;
         }
-
         .btn-google:hover {
-            background-color: var(--bg-primary);
-        }
-
-        .btn-google img {
-            width: 18px;
-            height: 18px;
-        }
-
-        .auth-divider {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 4px 0 16px 0;
-            color: var(--text-secondary);
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .auth-divider::before, .auth-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background-color: var(--border-color);
-        }
-
-        .google-profile-preview {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 16px;
-            text-align: left;
-        }
-
-        .google-profile-preview img {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-        }
-
-        .google-profile-preview .gp-name {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .google-profile-preview .gp-email {
-            font-size: 11px;
-            color: var(--text-secondary);
+            background-color: #357ae8;
         }
 
         /* ================= CHAT CONTAINER LAYOUT ================= */
@@ -573,51 +521,46 @@
     <!-- ================= AUTH CONTAINER ================= -->
     <div id="auth-container" class="container">
         <div class="brand-logo-area">
-            <h1>Santhosh Message</h1>
+            <h1>Santhosh Messages</h1>
             <p>POWERED BY REXO INTERNATIONAL</p>
         </div>
 
+        <!-- 1. Sign In Section -->
         <div id="login-section">
             <h3 style="margin-bottom: 15px; font-weight:600;">Sign In</h3>
-
-            <button id="google-login-btn" class="btn-google" type="button">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-                Continue with Google
-            </button>
-
-            <div class="auth-divider">OR</div>
-
             <input type="text" id="login-username" placeholder="Username">
             <input type="password" id="login-password" placeholder="Password">
             <button id="login-btn-submit" class="btn-submit">Login</button>
+            
+            <button id="google-login-btn" class="btn-google">
+                <i class="fab fa-google"></i> Login with Google
+            </button>
+            
             <p style="margin-top: 15px; font-size: 13px;">Don't have an account? <a href="#" id="go-to-signup" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Create account</a></p>
             <div id="error-message" style="display: none; color: red; margin-top: 10px; font-size: 13px; font-weight: 500;"></div>
         </div>
 
+        <!-- 2. Signup Section (ഗൂഗിൾ ഓപ്ഷൻ മാത്രം) -->
         <div id="signup-section" style="display: none;">
             <h3 style="margin-bottom: 15px; font-weight:600;">Create Account</h3>
-            <input type="text" id="signup-username" placeholder="Choose Username">
-            <input type="password" id="signup-password" placeholder="Password (Min 6 chars)">
-            <button id="signup-btn-submit" class="btn-submit">Register</button>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">Click below to authenticate using your Google account.</p>
+            
+            <button id="google-signup-btn" class="btn-google" style="margin-top: 0;">
+                <i class="fab fa-google"></i> Sign up with Google
+            </button>
+            
             <p style="margin-top: 15px; font-size: 13px;">Already have an account? <a href="#" id="go-to-login" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Back to Login</a></p>
             <div id="signup-error-message" style="display: none; color: red; margin-top: 10px; font-size: 13px; font-weight: 500;"></div>
         </div>
 
-        <!-- ================= NEW: GOOGLE PROFILE COMPLETION SECTION ================= -->
-        <div id="google-complete-section" style="display: none;">
-            <h3 style="margin-bottom: 15px; font-weight:600;">Complete Your Profile</h3>
-            <div id="google-profile-preview" class="google-profile-preview">
-                <img id="gp-photo" src="" alt="">
-                <div>
-                    <div class="gp-name" id="gp-name"></div>
-                    <div class="gp-email" id="gp-email"></div>
-                </div>
-            </div>
-            <input type="text" id="google-username" placeholder="Choose a unique username">
-            <input type="password" id="google-password" placeholder="Set a password (Min 6 chars)">
-            <button id="google-complete-btn-submit" class="btn-submit">Finish Setup</button>
-            <p style="margin-top: 15px; font-size: 12px; color: var(--text-secondary);">This username and password will let you log in with either Google or the form above.</p>
-            <div id="google-error-message" style="display: none; color: red; margin-top: 10px; font-size: 13px; font-weight: 500;"></div>
+        <!-- 3. Google Account Setup Section (യൂസർനെയിമും പാസ്‌വേർഡും സെറ്റ് ചെയ്യാൻ) -->
+        <div id="google-setup-section" style="display: none;">
+            <h3 style="margin-bottom: 10px; font-weight:600;">Complete Profile</h3>
+            <p style="font-size: 12px; color: #10b981; margin-bottom: 15px; font-weight: 500;">Google Verified Successfully!</p>
+            <input type="text" id="setup-username" placeholder="Choose Unique Username">
+            <input type="password" id="setup-password" placeholder="Create Password (Min 6 chars)">
+            <button id="setup-btn-submit" class="btn-submit">Complete & Start Chatting</button>
+            <div id="setup-error-message" style="display: none; color: red; margin-top: 10px; font-size: 13px; font-weight: 500;"></div>
         </div>
     </div>
 
@@ -655,7 +598,7 @@
                     </label>
                 </div>
                 <a href="http://rexointernational.dpdns.org" target="_blank" class="rex-link-btn">
-                    <i class="fas fa-globe"></i> Open Rexo International
+                    <i class="fas fa-globe"></i> Open Santhosh AI
                 </a>
             </div>
 
@@ -695,9 +638,10 @@
     </div>
 
     <!-- ================= FIREBASE & SCRIPT ================= -->
+    <!-- Added Firebase Auth SDK Required for Google Login -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -712,14 +656,13 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
         const auth = firebase.auth();
-        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        const database = firebase.database();
 
         const authContainer = document.getElementById('auth-container');
         const loginSection = document.getElementById('login-section');
         const signupSection = document.getElementById('signup-section');
-        const googleCompleteSection = document.getElementById('google-complete-section');
+        const googleSetupSection = document.getElementById('google-setup-section');
         const mainChatContainer = document.getElementById('main-chat-container');
         const themeToggle = document.getElementById('theme-toggle-switch');
         const settingsPanel = document.getElementById('settings-panel');
@@ -731,11 +674,7 @@
         let currentUser = "";
         let selectedUser = "";
         let chattedUsers = [];
-
-        // Holds the pending Google account (uid/email/name/photo) while the
-        // user is on the "Complete Your Profile" screen. Nothing is written
-        // to users/ until they submit a username + password here.
-        let pendingGoogleProfile = null;
+        let temporaryEmail = ""; // To hold verified Google Email during signup flow
 
         // Auto Login Session Lock Check
         window.addEventListener('DOMContentLoaded', () => {
@@ -765,29 +704,97 @@
             e.preventDefault(); loginSection.style.display = 'none'; signupSection.style.display = 'block';
         });
         document.getElementById('go-to-login').addEventListener('click', (e) => {
-            e.preventDefault(); signupSection.style.display = 'none'; loginSection.style.display = 'block';
+            e.preventDefault(); signupSection.style.display = 'none'; googleSetupSection.style.display = 'none'; loginSection.style.display = 'block';
         });
 
-        // Register Account
-        document.getElementById('signup-btn-submit').addEventListener('click', () => {
-            const uName = document.getElementById('signup-username').value.trim().toLowerCase();
-            const pWord = document.getElementById('signup-password').value.trim();
-            const errBox = document.getElementById('signup-error-message');
+        // Google Sign Up Trigger Flow
+        document.getElementById('google-signup-btn').addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then((result) => {
+                temporaryEmail = result.user.email;
+                signupSection.style.display = 'none';
+                googleSetupSection.style.display = 'block';
+            }).catch((error) => {
+                const errBox = document.getElementById('signup-error-message');
+                errBox.innerText = error.message;
+                errBox.style.display = 'block';
+            });
+        });
+
+        // Google Login Trigger Flow
+        document.getElementById('google-login-btn').addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then((result) => {
+                const email = result.user.email;
+                
+                // Search DB for existing user mapped to this verified Google Email
+                database.ref('users').once('value', (snapshot) => {
+                    let userFound = false;
+                    let foundUsername = "";
+                    
+                    snapshot.forEach((childSnapshot) => {
+                        const val = childSnapshot.val();
+                        if (val.email === email) {
+                            userFound = true;
+                            foundUsername = childSnapshot.key;
+                        }
+                    });
+
+                    if (userFound) {
+                        currentUser = foundUsername;
+                        localStorage.setItem('chat_session_user', currentUser);
+                        authContainer.style.display = 'none';
+                        mainChatContainer.style.display = 'flex';
+                        document.getElementById('current-logged-user').innerText = currentUser;
+                        setUserActiveStatus(true);
+                        loadChattedUsersList();
+                    } else {
+                        // User verified via Google but doesn't exist in Realtime Database yet -> Route to Setup
+                        temporaryEmail = email;
+                        loginSection.style.display = 'none';
+                        googleSetupSection.style.display = 'block';
+                    }
+                });
+            }).catch((error) => {
+                const errBox = document.getElementById('error-message');
+                errBox.innerText = error.message;
+                errBox.style.display = 'block';
+            });
+        });
+
+        // Setup Account Details & Commit to Firebase Realtime Database
+        document.getElementById('setup-btn-submit').addEventListener('click', () => {
+            const uName = document.getElementById('setup-username').value.trim().toLowerCase();
+            const pWord = document.getElementById('setup-password').value.trim();
+            const errBox = document.getElementById('setup-error-message');
 
             if(!uName || !pWord) return;
             if(pWord.length < 6) { errBox.innerText = "Password min 6 chars!"; errBox.style.display='block'; return; }
 
             database.ref('users/' + uName).once('value', (snapshot) => {
                 if(snapshot.exists()) {
-                    errBox.innerText = "Username taken!"; errBox.style.display='block';
+                    errBox.innerText = "Username already taken!"; errBox.style.display='block';
                 } else {
-                    database.ref('users/' + uName).set({ password: pWord, online: false, lastSeen: Date.now() })
-                    .then(() => { signupSection.style.display = 'none'; loginSection.style.display = 'block'; });
+                    database.ref('users/' + uName).set({ 
+                        password: pWord, 
+                        email: temporaryEmail, 
+                        online: true, 
+                        lastSeen: Date.now() 
+                    })
+                    .then(() => {
+                        currentUser = uName;
+                        localStorage.setItem('chat_session_user', currentUser);
+                        authContainer.style.display = 'none';
+                        googleSetupSection.style.display = 'none';
+                        mainChatContainer.style.display = 'flex';
+                        document.getElementById('current-logged-user').innerText = currentUser;
+                        loadChattedUsersList();
+                    });
                 }
             });
         });
 
-        // Login Account with Session LocalStorage
+        // Login Account with Username/Password
         document.getElementById('login-btn-submit').addEventListener('click', () => {
             const uName = document.getElementById('login-username').value.trim().toLowerCase();
             const pWord = document.getElementById('login-password').value.trim();
@@ -808,116 +815,6 @@
             });
         });
 
-        // ================= GOOGLE LOGIN FLOW =================
-
-        document.getElementById('google-login-btn').addEventListener('click', () => {
-            const errBox = document.getElementById('error-message');
-            errBox.style.display = 'none';
-
-            auth.signInWithPopup(googleProvider).then((result) => {
-                const gUser = result.user;
-
-                // Check whether this Google account (by uid) already has a
-                // linked profile in users/. We store the uid on the record
-                // created during "Complete Your Profile" so returning users
-                // skip straight to the chat instead of re-registering.
-                database.ref('users').orderByChild('googleUid').equalTo(gUser.uid).once('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        // Existing linked account -> log straight in, same as
-                        // the username/password path.
-                        let existingUsername = "";
-                        snapshot.forEach((child) => { existingUsername = child.key; });
-
-                        currentUser = existingUsername;
-                        localStorage.setItem('chat_session_user', currentUser);
-                        authContainer.style.display = 'none';
-                        mainChatContainer.style.display = 'flex';
-                        document.getElementById('current-logged-user').innerText = currentUser;
-                        setUserActiveStatus(true);
-                        loadChattedUsersList();
-                    } else {
-                        // First time this Google account has been seen ->
-                        // show the Complete Profile screen. Nothing is
-                        // written to the database yet.
-                        pendingGoogleProfile = {
-                            uid: gUser.uid,
-                            email: gUser.email || "",
-                            name: gUser.displayName || "",
-                            photo: gUser.photoURL || ""
-                        };
-
-                        document.getElementById('gp-photo').src = pendingGoogleProfile.photo || 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg';
-                        document.getElementById('gp-name').innerText = pendingGoogleProfile.name || "Google Account";
-                        document.getElementById('gp-email').innerText = pendingGoogleProfile.email;
-
-                        // Pre-fill a suggested username from the email, user can change it.
-                        const suggested = pendingGoogleProfile.email ? pendingGoogleProfile.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') : "";
-                        document.getElementById('google-username').value = suggested;
-                        document.getElementById('google-password').value = "";
-                        document.getElementById('google-error-message').style.display = 'none';
-
-                        loginSection.style.display = 'none';
-                        signupSection.style.display = 'none';
-                        googleCompleteSection.style.display = 'block';
-                    }
-                });
-            }).catch((error) => {
-                errBox.innerText = "Google sign-in failed: " + error.message;
-                errBox.style.display = 'block';
-            });
-        });
-
-        // Finish Google profile setup: pick username + password, write to users/
-        document.getElementById('google-complete-btn-submit').addEventListener('click', () => {
-            const uName = document.getElementById('google-username').value.trim().toLowerCase();
-            const pWord = document.getElementById('google-password').value.trim();
-            const errBox = document.getElementById('google-error-message');
-
-            if (!pendingGoogleProfile) {
-                errBox.innerText = "Session expired, please try Google sign-in again.";
-                errBox.style.display = 'block';
-                return;
-            }
-            if (!uName || !pWord) {
-                errBox.innerText = "Username and password are required.";
-                errBox.style.display = 'block';
-                return;
-            }
-            if (pWord.length < 6) {
-                errBox.innerText = "Password min 6 chars!";
-                errBox.style.display = 'block';
-                return;
-            }
-
-            database.ref('users/' + uName).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    errBox.innerText = "Username taken! Choose another.";
-                    errBox.style.display = 'block';
-                } else {
-                    database.ref('users/' + uName).set({
-                        password: pWord,
-                        online: false,
-                        lastSeen: Date.now(),
-                        googleUid: pendingGoogleProfile.uid,
-                        googleEmail: pendingGoogleProfile.email,
-                        displayName: pendingGoogleProfile.name,
-                        photoURL: pendingGoogleProfile.photo
-                    }).then(() => {
-                        currentUser = uName;
-                        localStorage.setItem('chat_session_user', currentUser);
-                        pendingGoogleProfile = null;
-
-                        authContainer.style.display = 'none';
-                        googleCompleteSection.style.display = 'none';
-                        mainChatContainer.style.display = 'flex';
-                        document.getElementById('current-logged-user').innerText = currentUser;
-                        setUserActiveStatus(true);
-                        loadChattedUsersList();
-                    });
-                }
-            });
-        });
-
         function setUserActiveStatus(status) {
             if(currentUser) {
                 database.ref('users/' + currentUser).update({ online: status, lastSeen: Date.now() });
@@ -932,20 +829,9 @@
             localStorage.removeItem('chat_session_user');
             currentUser = ""; selectedUser = "";
             mainChatContainer.style.display = 'none';
-
-            // Reset auth screen back to the login form (not the Google
-            // completion screen) for the next session.
-            googleCompleteSection.style.display = 'none';
-            signupSection.style.display = 'none';
-            loginSection.style.display = 'block';
             authContainer.style.display = 'block';
-
             document.getElementById('chat-message-input').disabled = true;
             document.getElementById('chat-send-btn').disabled = true;
-
-            // Also sign out of the Firebase Auth session so a stale Google
-            // popup session doesn't silently re-auth the next visitor.
-            if (auth.currentUser) { auth.signOut(); }
         });
 
         function loadChattedUsersList() {
@@ -986,7 +872,7 @@
                     document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
                     userItem.classList.add('active');
                     startChatWith(name);
-                    closeMobileSidebar(); // മൊബൈലിൽ ചാറ്റ് ക്ലിക്ക് ചെയ്യുമ്പോൾ സൈഡ്ബാർ തനിയെ ക്ലോസ് ആകും
+                    closeMobileSidebar(); 
                 });
                 usersListDiv.appendChild(userItem);
                 trackOnlineStatus(name);
@@ -1087,9 +973,9 @@
                     if(data.sender === currentUser) {
                         msgDiv.classList.add('sent');
                         if(data.read === true) {
-                            tickHtml = `<i class="fas fa-check-double msg-status-tick seen"></i>`; // Seen Blue Double Tick
+                            tickHtml = `<i class="fas fa-check-double msg-status-tick seen"></i>`; 
                         } else {
-                            tickHtml = `<i class="fas fa-check-double msg-status-tick"></i>`; // Grey Double Tick
+                            tickHtml = `<i class="fas fa-check-double msg-status-tick"></i>`; 
                         }
                     } else {
                         msgDiv.classList.add('received');
