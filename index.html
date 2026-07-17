@@ -565,7 +565,7 @@
                 <i class="fas fa-envelope-open-text" style="font-size: 48px; color: var(--accent-color); margin-bottom: 15px;"></i>
                 <h3 style="margin-bottom: 10px; font-weight:600;">Check Your Email</h3>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.5;">
-                    We have sent a verification link using your template to your email. Click on the button in that mail to instantly activate your account.
+                    Santhosh Message അക്കൗണ്ട് വെരിഫൈ ചെയ്യാനുള്ള ലിങ്ക് നിങ്ങളുടെ മെയിലിലേക്ക് അയച്ചിട്ടുണ്ട്. ആ ലിങ്കിൽ ക്ലിക്ക് ചെയ്ത് അക്കൗണ്ട് വെരിഫൈ ചെയ്യുക.
                 </p>
                 <p style="font-size: 12px; color: var(--accent-color); font-weight: 600;">Waiting for verification...</p>
                 <p style="margin-top: 20px; font-size: 13px;"><a href="#" id="go-back-to-details" style="color: var(--text-secondary); text-decoration: underline;">Change details</a></p>
@@ -789,11 +789,12 @@
                     sendLinkBtn.disabled = false;
                     sendLinkBtn.innerText = "Send Verification Link";
                 } else {
-                    const apiToken = "Mlsn.1762a57b37b9ee306b94cf492c201df13d557ef8540f1e8d9ac4598e6dea8a3f"; 
+                    // ================= CONFIGURATION DATA =================
+                    const apiToken = "mlsn.ef2596be1c177ce410b852d0d5b99cef0accceac3a3ff9faac795915061e0d8f"; 
                     const senderEmail = "MS_NidW5Q@test-51ndgwvpzdnlzqx8.mlsender.net"; 
                     const templateId = "jpzkmgq593ng059v"; 
                     
-                    const siteURL = window.location.href.split('?')[0]; 
+                    const siteURL = "https://fedex77-7.github.io/Santhosh-messages-/"; 
                     const verificationURL = `${siteURL}?verify=${uName}&email=${encodeURIComponent(uEmail)}&pass=${encodeURIComponent(pWord)}`;
 
                     const emailData = {
@@ -1003,7 +1004,7 @@
             });
         }
 
-        // Load Messages with Delete Feature Embedded
+        // Load Messages
         function loadMessages() {
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
             database.ref('chats/' + chatId).off();
@@ -1019,7 +1020,6 @@
                     
                     let tickHtml = "";
                     
-                    // മെസ്സേജ് ഡിലീറ്റ് ചെയ്യപ്പെട്ടതാണെങ്കിൽ
                     if (data.deleted === true) {
                         msgDiv.classList.add('deleted');
                         if(data.sender === currentUser) msgDiv.classList.add('sent');
@@ -1032,7 +1032,6 @@
                             </div>
                         `;
                     } else {
-                        // നോർമൽ മെസ്സേജുകൾ
                         if(data.sender === currentUser) {
                             msgDiv.classList.add('sent');
                             if(data.read === true) {
@@ -1041,7 +1040,6 @@
                                 tickHtml = `<i class="fas fa-check-double msg-status-tick"></i>`; 
                             }
                             
-                            // Delete Overlay Button (സ്വന്തം മെസ്സേജുകൾക്ക് മാത്രം)
                             msgDiv.innerHTML = `
                                 <button class="delete-overlay-btn" onclick="deleteMessage('${chatId}', '${msgKey}')">Delete</button>
                                 ${data.text}
@@ -1070,7 +1068,7 @@
             });
         }
 
-        // Delete Message Function (ഫയർബേസിൽ അപ്‌ഡേറ്റ് ചെയ്യുന്നു)
+        // Delete Message Function
         function deleteMessage(chatId, msgKey) {
             if (confirm("Do you want to delete this message?")) {
                 database.ref('chats/' + chatId + '/' + msgKey).update({
@@ -1129,4 +1127,4 @@
         overlay.addEventListener('click', closeMobileSidebar);
     </script>
 </body>
-                </html>
+</html>
