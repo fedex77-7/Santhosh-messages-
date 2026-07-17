@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- EmailJS SDK Library -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <style>
         /* ================= PREMIUM THEME COLORS ================= */
         :root[data-theme="light"] {
@@ -139,7 +142,6 @@
             position: relative;
         }
 
-        /* Sidebar - Default Desktop Layout */
         .sidebar {
             width: 320px;
             height: 100%;
@@ -383,7 +385,6 @@
             border-top-left-radius: 2px;
         }
 
-        /* Message Deleted Style */
         .message.deleted {
             font-style: italic;
             color: var(--text-secondary) !important;
@@ -391,7 +392,7 @@
             opacity: 0.7;
         }
 
-        /* Delete Button Option Overlay */
+        /* Message Delete Button Hover Styling */
         .delete-overlay-btn {
             position: absolute;
             top: -25px;
@@ -421,21 +422,10 @@
             gap: 3px;
         }
 
-        .msg-time {
-            font-size: 9px;
-            color: #667781;
-        }
+        .msg-time { font-size: 9px; color: #667781; }
+        .msg-status-tick { font-size: 10px; color: var(--tick-color); }
+        .msg-status-tick.seen { color: var(--tick-seen); }
 
-        .msg-status-tick {
-            font-size: 10px;
-            color: var(--tick-color);
-        }
-
-        .msg-status-tick.seen {
-            color: var(--tick-seen);
-        }
-
-        /* Input Area Optimized for Mobile Keyboard */
         .chat-input-area {
             padding: 10px 15px;
             background-color: var(--bg-secondary);
@@ -471,64 +461,31 @@
             font-size: 15px;
         }
 
-        /* Menu button styling for mobile */
-        .menu-btn {
-            display: none;
-            color: var(--text-primary);
-        }
+        .menu-btn { display: none; color: var(--text-primary); }
         .close-btn { display: none; }
 
-        /* ================= MOBILE RESPONSIVE AUTO-OPTIMIZATION ================= */
         @media (max-width: 768px) {
             .sidebar {
-                position: absolute; 
-                left: 0;
-                top: 0;
-                transform: translateX(-100%); 
-                height: 100%; 
-                width: 290px;
-                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+                position: absolute; left: 0; top: 0; transform: translateX(-100%); 
+                height: 100%; width: 290px; box-shadow: 5px 0 15px rgba(0,0,0,0.1);
             }
-            .sidebar.active { 
-                transform: translateX(0); 
-            }
-            .menu-btn {
-                display: flex;
-                margin-right: 5px;
-            }
-            .close-btn { 
-                display: flex; 
-            }
-            .chat-header {
-                padding-left: 10px;
-            }
-            .message { 
-                max-width: 85%; 
-                font-size: 13.5px;
-            }
-            .chat-input-area {
-                padding: 8px 12px;
-            }
-            .chat-input-area input {
-                padding: 8px 14px;
-                font-size: 13.5px;
-            }
+            .sidebar.active { transform: translateX(0); }
+            .menu-btn { display: flex; margin-right: 5px; }
+            .close-btn { display: flex; }
+            .chat-header { padding-left: 10px; }
+            .message { max-width: 85%; font-size: 13.5px; }
+            .chat-input-area { padding: 8px 12px; }
+            .chat-input-area input { padding: 8px 14px; font-size: 13.5px; }
             .sidebar-overlay {
-                display: none;
-                position: absolute;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0,0,0,0.4);
-                z-index: 40;
+                display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.4); z-index: 40;
             }
-            .sidebar-overlay.active {
-                display: block;
-            }
+            .sidebar-overlay.active { display: block; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Overlay for mobile view -->
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
     <!-- ================= AUTH CONTAINER ================= -->
@@ -550,36 +507,31 @@
 
         <!-- Register / Signup Section -->
         <div id="signup-section" style="display: none;">
-            
-            <!-- STEP 1: Enter Registration Details -->
+            <!-- Details Fields Section -->
             <div id="signup-details-fields">
                 <h3 style="margin-bottom: 15px; font-weight:600;">Create Account</h3>
                 <input type="text" id="signup-username" placeholder="Choose Username">
                 <input type="email" id="signup-email" placeholder="Enter Email Address">
                 <input type="password" id="signup-password" placeholder="Password (Min 6 chars)">
-                <button id="signup-btn-send-link" class="btn-submit">Send Verification Link</button>
+                <button id="signup-btn-send-otp" class="btn-submit" style="margin-bottom: 20px;">Send OTP</button>
             </div>
             
-            <!-- STEP 2: Waiting Screen -->
-            <div id="verification-pending-area" style="display: none;">
-                <i class="fas fa-envelope-open-text" style="font-size: 48px; color: var(--accent-color); margin-bottom: 15px;"></i>
-                <h3 style="margin-bottom: 10px; font-weight:600;">Check Your Email</h3>
-                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.5;">
-                    Santhosh Message അക്കൗണ്ട് വെരിഫൈ ചെയ്യാനുള്ള ലിങ്ക് നിങ്ങളുടെ മെയിലിലേക്ക് അയച്ചിട്ടുണ്ട്. ആ ലിങ്കിൽ ക്ലിക്ക് ചെയ്ത് അക്കൗണ്ട് വെരിഫൈ ചെയ്യുക.
+            <!-- Permanent OTP Typing Section -->
+            <div id="otp-verification-area" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 20px;">
+                <input type="text" id="signup-otp" placeholder="Enter 6-Digit OTP" style="text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 3px;">
+                <button id="signup-btn-verify-otp" class="btn-submit">Verify & Register</button>
+                <p style="margin-top: 10px; font-size: 11px; color: #ef4444; font-weight: 500; line-height: 1.4;">
+                    * If you don't see the email, please check your Spam folder also.
                 </p>
-                <p style="font-size: 12px; color: var(--accent-color); font-weight: 600;">Waiting for verification...</p>
-                <p style="margin-top: 20px; font-size: 13px;"><a href="#" id="go-back-to-details" style="color: var(--text-secondary); text-decoration: underline;">Change details</a></p>
             </div>
 
-            <p style="margin-top: 15px; font-size: 13px;">Already have an account? <a href="#" id="go-to-login" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Back to Login</a></p>
+            <p style="margin-top: 20px; font-size: 13px;">Already have an account? <a href="#" id="go-to-login" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Back to Login</a></p>
             <div id="signup-error-message" style="display: none; color: red; margin-top: 10px; font-size: 13px; font-weight: 500;"></div>
         </div>
     </div>
 
     <!-- ================= CHAT CONTAINER ================= -->
     <div id="main-chat-container" class="chat-container" style="display: none;">
-        
-        <!-- Sidebar -->
         <div id="chat-sidebar" class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-brand">
@@ -588,15 +540,11 @@
                 </div>
                 <button id="close-sidebar-btn" class="action-btn close-btn"><i class="fas fa-times"></i></button>
             </div>
-            
             <div class="search-box">
                 <i class="fas fa-search"></i>
                 <input type="text" id="search-user-input" placeholder="Type exact username & press Enter...">
             </div>
-            
             <div id="active-users-list" class="users-list"></div>
-
-            <!-- Settings -->
             <div id="settings-panel" class="settings-panel">
                 <div class="settings-header" style="display:flex; justify-content:space-between;">
                     <span style="font-weight:600; font-size:14px;">Settings</span>
@@ -609,11 +557,8 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <a href="http://rexointernational.dpdns.org" target="_blank" class="rex-link-btn">
-                    <i class="fas fa-globe"></i> Open Rexo International
-                </a>
+                <a href="http://rexointernational.dpdns.org" target="_blank" class="rex-link-btn"><i class="fas fa-globe"></i> Open Rexo International</a>
             </div>
-
             <div class="sidebar-footer">
                 <div class="user-info" style="display:flex; align-items:center;">
                     <i class="fas fa-user-circle" style="font-size: 20px; color: var(--accent-color);"></i>
@@ -626,26 +571,21 @@
             </div>
         </div>
 
-        <!-- Chat Window -->
         <div class="chat-window">
             <div class="chat-header">
                 <button id="menu-toggle-btn" class="action-btn menu-btn"><i class="fas fa-bars"></i></button>
-                
                 <div id="active-chat-avatar" class="user-avatar" style="display: none; width: 34px; height: 34px; font-size: 12px; margin-right:0;"></div>
                 <div style="flex:1; min-width:0;">
                     <h2 id="chat-with-heading" style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Select a chat to start</h2>
                     <span id="chat-user-status" style="font-size: 11px; color: var(--text-secondary); display: block;"></span>
                 </div>
             </div>
-            
             <div id="chat-messages-box" class="message-container"></div>
-            
             <div class="chat-input-area">
                 <input type="text" id="chat-message-input" placeholder="Type a message..." disabled>
                 <button id="chat-send-btn" class="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
-
     </div>
 
     <!-- ================= FIREBASE & SCRIPT ================= -->
@@ -667,183 +607,121 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // ================= EMAILJS FINAL CONFIGURATION =================
+        const EMAILJS_PUBLIC_KEY = "FKnQFlga2fuKJ-z08"; 
+        const EMAILJS_SERVICE_ID = "service_4b43nui"; 
+        const EMAILJS_TEMPLATE_ID = "template_7csira9"; 
+
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+
         const authContainer = document.getElementById('auth-container');
         const loginSection = document.getElementById('login-section');
         const signupSection = document.getElementById('signup-section');
         const signupDetailsFields = document.getElementById('signup-details-fields');
-        const verificationPendingArea = document.getElementById('verification-pending-area');
+        const otpVerificationArea = document.getElementById('otp-verification-area');
         const mainChatContainer = document.getElementById('main-chat-container');
         const themeToggle = document.getElementById('theme-toggle-switch');
         const settingsPanel = document.getElementById('settings-panel');
         const searchInput = document.getElementById('search-user-input');
-        
         const sidebar = document.getElementById('chat-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
 
-        let currentUser = "";
-        let selectedUser = "";
-        let chattedUsers = [];
+        let currentUser = ""; let selectedUser = ""; let chattedUsers = [];
+        let generatedOTP = "";
 
-        // URL Verification Check
         window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const verifyUser = urlParams.get('verify');
-            const userEmail = urlParams.get('email');
-            const userPass = urlParams.get('pass');
-
-            if (verifyUser && userEmail && userPass) {
-                database.ref('users/' + verifyUser).set({ 
-                    password: userPass, 
-                    email: userEmail,
-                    online: false, 
-                    lastSeen: Date.now() 
-                })
-                .then(() => {
-                    alert("നിങ്ങളുടെ അക്കൗണ്ട് വിജയകരമായി വെരിഫൈ ചെയ്യപ്പെട്ടിരിക്കുന്നു! ഇനി ലോഗിൻ ചെയ്യാം.");
-                    window.location.href = window.location.pathname; 
-                });
-                return;
-            }
-
             const savedUser = localStorage.getItem('chat_session_user');
             if (savedUser) {
-                currentUser = savedUser;
-                authContainer.style.display = 'none';
-                mainChatContainer.style.display = 'flex';
+                currentUser = savedUser; authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
                 document.getElementById('current-logged-user').innerText = currentUser;
-                setUserActiveStatus(true);
-                loadChattedUsersList();
+                setUserActiveStatus(true); loadChattedUsersList();
             }
         });
 
-        themeToggle.addEventListener('change', (e) => {
-            document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
-        });
-
-        document.getElementById('settings-toggle-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            settingsPanel.style.display = settingsPanel.style.display === 'flex' ? 'none' : 'flex';
-        });
-
+        themeToggle.addEventListener('change', (e) => { document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light'); });
+        document.getElementById('settings-toggle-btn').addEventListener('click', (e) => { e.stopPropagation(); settingsPanel.style.display = settingsPanel.style.display === 'flex' ? 'none' : 'flex'; });
         document.getElementById('close-settings-btn').addEventListener('click', () => { settingsPanel.style.display = 'none'; });
-
-        document.getElementById('go-to-signup').addEventListener('click', (e) => {
-            e.preventDefault(); 
-            loginSection.style.display = 'none'; 
-            signupSection.style.display = 'block';
-            resetSignupForm();
-        });
-        document.getElementById('go-to-login').addEventListener('click', (e) => {
-            e.preventDefault(); 
-            signupSection.style.display = 'none'; 
-            loginSection.style.display = 'block';
-            resetSignupForm();
-        });
-        document.getElementById('go-back-to-details').addEventListener('click', (e) => {
-            e.preventDefault();
-            verificationPendingArea.style.display = 'none';
-            signupDetailsFields.style.display = 'block';
-        });
+        document.getElementById('go-to-signup').addEventListener('click', (e) => { e.preventDefault(); loginSection.style.display = 'none'; signupSection.style.display = 'block'; resetSignupForm(); });
+        document.getElementById('go-to-login').addEventListener('click', (e) => { e.preventDefault(); signupSection.style.display = 'none'; loginSection.style.display = 'block'; resetSignupForm(); });
 
         function resetSignupForm() {
-            document.getElementById('signup-username').value = "";
-            document.getElementById('signup-email').value = "";
-            document.getElementById('signup-password').value = "";
-            signupDetailsFields.style.display = 'block';
-            verificationPendingArea.style.display = 'none';
+            document.getElementById('signup-username').value = ""; document.getElementById('signup-email').value = ""; document.getElementById('signup-password').value = "";
+            document.getElementById('signup-otp').value = ""; otpVerificationArea.style.display = 'none';
             document.getElementById('signup-error-message').style.display = 'none';
-            document.getElementById('signup-btn-send-link').disabled = false;
-            document.getElementById('signup-btn-send-link').innerText = "Send Verification Link";
+            document.getElementById('signup-btn-send-otp').disabled = false; document.getElementById('signup-btn-send-otp').innerText = "Send OTP";
+            generatedOTP = "";
         }
 
-        // STEP 1: Send Verification Link
-        document.getElementById('signup-btn-send-link').addEventListener('click', () => {
+        // Send OTP
+        document.getElementById('signup-btn-send-otp').addEventListener('click', () => {
             const uName = document.getElementById('signup-username').value.trim().toLowerCase();
             const uEmail = document.getElementById('signup-email').value.trim();
             const pWord = document.getElementById('signup-password').value.trim();
             const errBox = document.getElementById('signup-error-message');
-            const sendLinkBtn = document.getElementById('signup-btn-send-link');
+            const sendOtpBtn = document.getElementById('signup-btn-send-otp');
 
-            if(!uName || !uEmail || !pWord) {
-                errBox.style.color = "red";
-                errBox.innerText = "Please fill all fields!";
-                errBox.style.display = 'block';
-                return;
-            }
-            if(pWord.length < 6) { 
-                errBox.style.color = "red";
-                errBox.innerText = "Password min 6 chars!"; 
-                errBox.style.display = 'block'; 
-                return; 
-            }
+            if(!uName || !uEmail || !pWord) { errBox.style.color = "red"; errBox.innerText = "Please fill all fields!"; errBox.style.display = 'block'; return; }
+            if(pWord.length < 6) { errBox.style.color = "red"; errBox.innerText = "Password min 6 chars!"; errBox.style.display = 'block'; return; }
 
-            errBox.style.display = 'none';
-            sendLinkBtn.disabled = true;
-            sendLinkBtn.innerText = "Sending Link...";
+            errBox.style.display = 'none'; sendOtpBtn.disabled = true; sendOtpBtn.innerText = "Sending OTP...";
 
             database.ref('users/' + uName).once('value', (snapshot) => {
                 if (snapshot.exists()) {
-                    errBox.style.color = "red";
-                    errBox.innerText = "Username taken!";
-                    errBox.style.display = 'block';
-                    sendLinkBtn.disabled = false;
-                    sendLinkBtn.innerText = "Send Verification Link";
+                    errBox.style.color = "red"; errBox.innerText = "Username taken!"; errBox.style.display = 'block';
+                    sendOtpBtn.disabled = false; sendOtpBtn.innerText = "Send OTP";
                 } else {
-                    // ================= CONFIGURATION DATA =================
-                    const apiToken = "mlsn.ef2596be1c177ce410b852d0d5b99cef0accceac3a3ff9faac795915061e0d8f"; 
-                    const senderEmail = "MS_NidW5Q@test-51ndgwvpzdnlzqx8.mlsender.net"; 
-                    const templateId = "jpzkmgq593ng059v"; 
-                    
-                    const siteURL = "https://fedex77-7.github.io/Santhosh-messages-/"; 
-                    const verificationURL = `${siteURL}?verify=${uName}&email=${encodeURIComponent(uEmail)}&pass=${encodeURIComponent(pWord)}`;
+                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
-                    const emailData = {
-                        "from": { "email": senderEmail, "name": "Santhosh Message" },
-                        "to": [{ "email": uEmail, "name": uName }],
-                        "template_id": templateId,
-                        "variables": [
-                            {
-                                "email": uEmail,
-                                "substitutions": [
-                                    { "var": "name", "value": uName },
-                                    { "var": "verification_url", "value": verificationURL }
-                                ]
-                            }
-                        ]
+                    const templateParams = {
+                        name: uName,
+                        user_email: uEmail,
+                        otp: generatedOTP
                     };
 
-                    fetch('https://api.mailersend.com/v1/email', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiToken}`
-                        },
-                        body: JSON.stringify(emailData)
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            signupDetailsFields.style.display = 'none';
-                            verificationPendingArea.style.display = 'block';
-                            errBox.style.color = "green";
-                            errBox.innerText = "Verification link successfully sent to your email!";
-                            errBox.style.display = 'block';
-                        } else {
-                            return response.json().then(err => { throw err; });
-                        }
-                    })
-                    .catch(error => {
-                        sendLinkBtn.disabled = false;
-                        sendLinkBtn.innerText = "Send Verification Link";
-                        errBox.style.color = "red";
-                        errBox.innerText = "Failed to send link. Try again.";
-                        errBox.style.display = 'block';
-                        console.error("MailerSend API Error:", error);
+                    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                    .then(() => {
+                        otpVerificationArea.style.display = 'block'; 
+                        sendOtpBtn.innerText = "OTP Sent!";
+                        errBox.style.color = "green"; errBox.innerText = "OTP successfully sent to your email!"; errBox.style.display = 'block';
+                    }, (error) => {
+                        sendOtpBtn.disabled = false; sendOtpBtn.innerText = "Send OTP";
+                        errBox.style.color = "red"; errBox.innerText = "Failed to send OTP. Try again."; errBox.style.display = 'block';
+                        console.error("EmailJS Error:", error);
                     });
                 }
             });
         });
 
-        // Login Account
+        // Verify OTP & Register
+        document.getElementById('signup-btn-verify-otp').addEventListener('click', () => {
+            const uName = document.getElementById('signup-username').value.trim().toLowerCase();
+            const uEmail = document.getElementById('signup-email').value.trim();
+            const pWord = document.getElementById('signup-password').value.trim();
+            const userEnteredOtp = document.getElementById('signup-otp').value.trim();
+            const errBox = document.getElementById('signup-error-message');
+            const verifyBtn = document.getElementById('signup-btn-verify-otp');
+
+            if (!userEnteredOtp) { errBox.style.color = "red"; errBox.innerText = "Please enter the OTP!"; errBox.style.display = 'block'; return; }
+
+            if (userEnteredOtp === generatedOTP) {
+                verifyBtn.disabled = true; verifyBtn.innerText = "Creating Account...";
+
+                database.ref('users/' + uName).set({ 
+                    password: pWord, email: uEmail, online: false, lastSeen: Date.now() 
+                })
+                .then(() => {
+                    alert("Registration Successful!"); resetSignupForm();
+                    signupSection.style.display = 'none'; loginSection.style.display = 'block'; 
+                }).catch((error) => {
+                    verifyBtn.disabled = false; verifyBtn.innerText = "Verify & Register";
+                    errBox.style.color = "red"; errBox.innerText = "Database Error! Try again."; errBox.style.display = 'block';
+                });
+            } else {
+                errBox.style.color = "red"; errBox.innerText = "Invalid OTP! Please check again."; errBox.style.display = 'block';
+            }
+        });
+
+        // Login
         document.getElementById('login-btn-submit').addEventListener('click', () => {
             const uName = document.getElementById('login-username').value.trim().toLowerCase();
             const pWord = document.getElementById('login-password').value.trim();
@@ -851,36 +729,21 @@
 
             database.ref('users/' + uName).once('value', (snapshot) => {
                 if(snapshot.exists() && snapshot.val().password === pWord) {
-                    currentUser = uName;
-                    localStorage.setItem('chat_session_user', currentUser);
-                    authContainer.style.display = 'none';
-                    mainChatContainer.style.display = 'flex';
+                    currentUser = uName; localStorage.setItem('chat_session_user', currentUser);
+                    authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
                     document.getElementById('current-logged-user').innerText = currentUser;
-                    setUserActiveStatus(true);
-                    loadChattedUsersList();
-                } else {
-                    errBox.innerText = "Invalid Login!"; errBox.style.display = 'block';
-                }
+                    setUserActiveStatus(true); loadChattedUsersList();
+                } else { errBox.innerText = "Invalid Login!"; errBox.style.display = 'block'; }
             });
         });
 
-        function setUserActiveStatus(status) {
-            if(currentUser) {
-                database.ref('users/' + currentUser).update({ online: status, lastSeen: Date.now() });
-            }
-        }
-
+        function setUserActiveStatus(status) { if(currentUser) { database.ref('users/' + currentUser).update({ online: status, lastSeen: Date.now() }); } }
         window.addEventListener('beforeunload', () => { setUserActiveStatus(false); });
 
-        // Logout
         document.getElementById('logout-btn').addEventListener('click', () => {
-            setUserActiveStatus(false);
-            localStorage.removeItem('chat_session_user');
-            currentUser = ""; selectedUser = "";
-            mainChatContainer.style.display = 'none';
-            authContainer.style.display = 'block';
-            document.getElementById('chat-message-input').disabled = true;
-            document.getElementById('chat-send-btn').disabled = true;
+            setUserActiveStatus(false); localStorage.removeItem('chat_session_user');
+            currentUser = ""; selectedUser = ""; mainChatContainer.style.display = 'none'; authContainer.style.display = 'block';
+            document.getElementById('chat-message-input').disabled = true; document.getElementById('chat-send-btn').disabled = true;
         });
 
         function loadChattedUsersList() {
@@ -898,15 +761,12 @@
         }
 
         function renderSidebarList(searchedUser = null) {
-            const usersListDiv = document.getElementById('active-users-list');
-            usersListDiv.innerHTML = "";
+            const usersListDiv = document.getElementById('active-users-list'); usersListDiv.innerHTML = "";
             const finalDisplayList = searchedUser ? [searchedUser] : chattedUsers;
 
             finalDisplayList.forEach((name) => {
                 if(name === currentUser) return;
-
-                const userItem = document.createElement('div');
-                userItem.classList.add('user-item');
+                const userItem = document.createElement('div'); userItem.classList.add('user-item');
                 if(name === selectedUser) userItem.classList.add('active');
 
                 userItem.innerHTML = `
@@ -916,212 +776,101 @@
                     </div>
                     <div class="unread-badge" id="badge-${name}" style="display: none;">0</div>
                 `;
-
                 userItem.addEventListener('click', () => {
                     document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
-                    userItem.classList.add('active');
-                    startChatWith(name);
-                    closeMobileSidebar(); 
+                    userItem.classList.add('active'); startChatWith(name); closeMobileSidebar(); 
                 });
-                usersListDiv.appendChild(userItem);
-                trackOnlineStatus(name);
-                listenForUnreadMessages(name);
+                usersListDiv.appendChild(userItem); trackOnlineStatus(name); listenForUnreadMessages(name);
             });
         }
 
         function trackOnlineStatus(username) {
             database.ref('users/' + username).on('value', (snapshot) => {
-                const userObj = snapshot.val();
-                const avatarDiv = document.getElementById('avatar-status-' + username);
-                if(avatarDiv) {
-                    if(userObj && userObj.online === true) avatarDiv.classList.add('online-dot');
-                    else avatarDiv.classList.remove('online-dot');
-                }
+                const userObj = snapshot.val(); const avatarDiv = document.getElementById('avatar-status-' + username);
+                if(avatarDiv) { if(userObj && userObj.online === true) avatarDiv.classList.add('online-dot'); else avatarDiv.classList.remove('online-dot'); }
                 if (selectedUser === username) updateHeaderStatus(userObj);
             });
         }
 
         function updateHeaderStatus(userObj) {
             const statusSpan = document.getElementById('chat-user-status');
-            if (userObj && userObj.online === true) {
-                statusSpan.innerHTML = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-circle" style="font-size:6px;"></i> Active now</span>`;
-            } else if (userObj && userObj.lastSeen) {
-                statusSpan.innerText = "Last active " + formatTime(userObj.lastSeen);
-            } else {
-                statusSpan.innerText = "Offline";
-            }
+            if (userObj && userObj.online === true) { statusSpan.innerHTML = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-circle" style="font-size:6px;"></i> Active now</span>`; }
+            else if (userObj && userObj.lastSeen) { statusSpan.innerText = "Last active " + formatTime(userObj.lastSeen); }
+            else { statusSpan.innerText = "Offline"; }
         }
 
         searchInput.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') {
-                const searchQuery = searchInput.value.trim().toLowerCase();
-                if(!searchQuery) { renderSidebarList(); return; }
-                database.ref('users/' + searchQuery).once('value', (snapshot) => {
-                    if (snapshot.exists()) renderSidebarList(searchQuery);
-                    else alert("User not found!");
-                });
+                const searchQuery = searchInput.value.trim().toLowerCase(); if(!searchQuery) { renderSidebarList(); return; }
+                database.ref('users/' + searchQuery).once('value', (snapshot) => { if (snapshot.exists()) renderSidebarList(searchQuery); else alert("User not found!"); });
             }
         });
 
         function listenForUnreadMessages(otherUser) {
             const chatId = currentUser < otherUser ? currentUser + "_" + otherUser : otherUser + "_" + currentUser;
             database.ref('chats/' + chatId).on('value', (snapshot) => {
-                let unreadCount = 0;
-                snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    if (data.sender === otherUser && data.read === false && data.deleted !== true) unreadCount++;
-                });
+                let unreadCount = 0; snapshot.forEach((childSnapshot) => { const data = childSnapshot.val(); if (data.sender === otherUser && data.read === false && data.deleted !== true) unreadCount++; });
                 const badge = document.getElementById('badge-' + otherUser);
-                if (badge) {
-                    if (unreadCount > 0 && selectedUser !== otherUser) {
-                        badge.innerText = unreadCount; badge.style.display = 'flex';
-                    } else badge.style.display = 'none';
-                }
+                if (badge) { if (unreadCount > 0 && selectedUser !== otherUser) { badge.innerText = unreadCount; badge.style.display = 'flex'; } else badge.style.display = 'none'; }
             });
         }
 
         function startChatWith(name) {
-            selectedUser = name;
-            const avatar = document.getElementById('active-chat-avatar');
+            selectedUser = name; const avatar = document.getElementById('active-chat-avatar');
             avatar.innerText = name.charAt(0).toUpperCase(); avatar.style.display = 'flex';
             document.getElementById('chat-with-heading').innerText = selectedUser;
-            document.getElementById('chat-message-input').disabled = false;
-            document.getElementById('chat-send-btn').disabled = false;
-            
-            markMessagesAsRead(name);
-            loadMessages();
+            document.getElementById('chat-message-input').disabled = false; document.getElementById('chat-send-btn').disabled = false;
+            markMessagesAsRead(name); loadMessages();
         }
 
         function markMessagesAsRead(otherUser) {
             const chatId = currentUser < otherUser ? currentUser + "_" + otherUser : otherUser + "_" + currentUser;
-            database.ref('chats/' + chatId).once('value', (snapshot) => {
-                snapshot.forEach((childSnapshot) => {
-                    const key = childSnapshot.key;
-                    if (childSnapshot.val().sender === otherUser && childSnapshot.val().read === false) {
-                        database.ref('chats/' + chatId + '/' + key).update({ read: true });
-                    }
-                });
-            });
+            database.ref('chats/' + chatId).once('value', (snapshot) => { snapshot.forEach((childSnapshot) => { const key = childSnapshot.key; if (childSnapshot.val().sender === otherUser && childSnapshot.val().read === false) { database.ref('chats/' + chatId + '/' + key).update({ read: true }); } }); });
         }
 
-        // Load Messages
+        // Render Messages with Double Tick & Delete Support
         function loadMessages() {
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
             database.ref('chats/' + chatId).off();
             database.ref('chats/' + chatId).on('value', (snapshot) => {
-                const msgBox = document.getElementById('chat-messages-box');
-                msgBox.innerHTML = "";
-                
+                const msgBox = document.getElementById('chat-messages-box'); msgBox.innerHTML = "";
                 snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    const msgKey = childSnapshot.key;
-                    const msgDiv = document.createElement('div');
-                    msgDiv.classList.add('message');
-                    
+                    const data = childSnapshot.val(); const msgKey = childSnapshot.key; const msgDiv = document.createElement('div'); msgDiv.classList.add('message');
                     let tickHtml = "";
                     
                     if (data.deleted === true) {
-                        msgDiv.classList.add('deleted');
-                        if(data.sender === currentUser) msgDiv.classList.add('sent');
-                        else msgDiv.classList.add('received');
-                        
-                        msgDiv.innerHTML = `
-                            <i class="fas fa-ban" style="font-size:12px; margin-right:4px;"></i> This message was deleted
-                            <div class="msg-meta-box">
-                                <span class="msg-time">${formatTime(data.timestamp)}</span>
-                            </div>
-                        `;
+                        msgDiv.classList.add('deleted'); if(data.sender === currentUser) msgDiv.classList.add('sent'); else msgDiv.classList.add('received');
+                        msgDiv.innerHTML = `<i class="fas fa-ban" style="font-size:12px; margin-right:4px;"></i> This message was deleted<div class="msg-meta-box"><span class="msg-time">${formatTime(data.timestamp)}</span></div>`;
                     } else {
                         if(data.sender === currentUser) {
-                            msgDiv.classList.add('sent');
-                            if(data.read === true) {
-                                tickHtml = `<i class="fas fa-check-double msg-status-tick seen"></i>`; 
-                            } else {
-                                tickHtml = `<i class="fas fa-check-double msg-status-tick"></i>`; 
-                            }
-                            
-                            msgDiv.innerHTML = `
-                                <button class="delete-overlay-btn" onclick="deleteMessage('${chatId}', '${msgKey}')">Delete</button>
-                                ${data.text}
-                                <div class="msg-meta-box">
-                                    <span class="msg-time">${formatTime(data.timestamp)}</span>
-                                    ${tickHtml}
-                                </div>
-                            `;
+                            msgDiv.classList.add('sent'); tickHtml = data.read === true ? `<i class="fas fa-check-double msg-status-tick seen"></i>` : `<i class="fas fa-check-double msg-status-tick"></i>`;
+                            msgDiv.innerHTML = `<button class="delete-overlay-btn" onclick="deleteMessage('${chatId}', '${msgKey}')">Delete</button>${data.text}<div class="msg-meta-box"><span class="msg-time">${formatTime(data.timestamp)}</span>${tickHtml}</div>`;
                         } else {
-                            msgDiv.classList.add('received');
-                            if (data.read === false) {
-                                database.ref('chats/' + chatId + '/' + msgKey).update({ read: true });
-                            }
-                            msgDiv.innerHTML = `
-                                ${data.text}
-                                <div class="msg-meta-box">
-                                    <span class="msg-time">${formatTime(data.timestamp)}</span>
-                                </div>
-                            `;
+                            msgDiv.classList.add('received'); if (data.read === false) { database.ref('chats/' + chatId + '/' + msgKey).update({ read: true }); }
+                            msgDiv.innerHTML = `${data.text}<div class="msg-meta-box"><span class="msg-time">${formatTime(data.timestamp)}</span></div>`;
                         }
                     }
-                    
                     msgBox.appendChild(msgDiv);
                 });
                 msgBox.scrollTop = msgBox.scrollHeight;
             });
         }
 
-        // Delete Message Function
-        function deleteMessage(chatId, msgKey) {
-            if (confirm("Do you want to delete this message?")) {
-                database.ref('chats/' + chatId + '/' + msgKey).update({
-                    text: "This message was deleted",
-                    deleted: true
-                });
-            }
-        }
+        // Delete Message
+        function deleteMessage(chatId, msgKey) { if (confirm("Do you want to delete this message?")) { database.ref('chats/' + chatId + '/' + msgKey).update({ text: "This message was deleted", deleted: true }); } }
 
-        // Send Message
         document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
         document.getElementById('chat-message-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 
         function sendMessage() {
-            const inputField = document.getElementById('chat-message-input');
-            const text = inputField.value.trim();
-            if(!text || !selectedUser) return;
-            
+            const inputField = document.getElementById('chat-message-input'); const text = inputField.value.trim(); if(!text || !selectedUser) return;
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
-            
-            database.ref('chats/' + chatId).push({
-                sender: currentUser,
-                text: text,
-                timestamp: Date.now(),
-                read: false,
-                deleted: false
-            }).then(() => {
-                inputField.value = "";
-                inputField.focus(); 
-            });
+            database.ref('chats/' + chatId).push({ sender: currentUser, text: text, timestamp: Date.now(), read: false, deleted: false }).then(() => { inputField.value = ""; inputField.focus(); });
         }
 
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12; hours = hours ? hours : 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            return hours + ':' + minutes + ' ' + ampm;
-        }
-
-        // --- MOBILE DRAWER INTERACTION FUNCTIONS ---
-        function openMobileSidebar() {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-        }
-
-        function closeMobileSidebar() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
+        function formatTime(timestamp) { const date = new Date(timestamp); let hours = date.getHours(); let minutes = date.getMinutes(); const ampm = hours >= 12 ? 'PM' : 'AM'; hours = hours % 12; hours = hours ? hours : 12; minutes = minutes < 10 ? '0' + minutes : minutes; return hours + ':' + minutes + ' ' + ampm; }
+        function openMobileSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); }
+        function closeMobileSidebar() { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
         document.getElementById('menu-toggle-btn').addEventListener('click', openMobileSidebar);
         document.getElementById('close-sidebar-btn').addEventListener('click', closeMobileSidebar);
         overlay.addEventListener('click', closeMobileSidebar);
