@@ -392,6 +392,7 @@
             opacity: 0.7;
         }
 
+        /* Message Delete Button (Hover) */
         .delete-overlay-btn {
             position: absolute;
             top: -25px;
@@ -515,8 +516,8 @@
                 <button id="signup-btn-send-otp" class="btn-submit" style="margin-bottom: 20px;">Send OTP</button>
             </div>
             
-            <!-- Permanent OTP Typing Section with Spam Warning -->
-            <div id="otp-verification-area" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 20px;">
+            <!-- [CHANGED] Permanent OTP Input with Spam Warnings -->
+            <div id="otp-verification-area" style="border-top: 1px dashed var(--border-color); padding-top: 20px;">
                 <input type="text" id="signup-otp" placeholder="Enter 6-Digit OTP" style="text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 3px;">
                 <button id="signup-btn-verify-otp" class="btn-submit">Verify & Register</button>
                 <p style="margin-top: 10px; font-size: 11px; color: #ef4444; font-weight: 500; line-height: 1.4;">
@@ -643,15 +644,16 @@
         document.getElementById('go-to-signup').addEventListener('click', (e) => { e.preventDefault(); loginSection.style.display = 'none'; signupSection.style.display = 'block'; resetSignupForm(); });
         document.getElementById('go-to-login').addEventListener('click', (e) => { e.preventDefault(); signupSection.style.display = 'none'; loginSection.style.display = 'block'; resetSignupForm(); });
 
+        // [CHANGED] Permanent OTP section handling
         function resetSignupForm() {
             document.getElementById('signup-username').value = ""; document.getElementById('signup-email').value = ""; document.getElementById('signup-password').value = "";
-            document.getElementById('signup-otp').value = ""; otpVerificationArea.style.display = 'none';
+            document.getElementById('signup-otp').value = "";
             document.getElementById('signup-error-message').style.display = 'none';
             document.getElementById('signup-btn-send-otp').disabled = false; document.getElementById('signup-btn-send-otp').innerText = "Send OTP";
             generatedOTP = "";
         }
 
-        // Send OTP via EmailJS (All matching variable mappings included)
+        // Send OTP via EmailJS
         document.getElementById('signup-btn-send-otp').addEventListener('click', () => {
             const uName = document.getElementById('signup-username').value.trim().toLowerCase();
             const uEmail = document.getElementById('signup-email').value.trim();
@@ -671,7 +673,7 @@
                 } else {
                     generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
-                    // ഡാഷ്‌ബോർഡിലെ To Email കാലിയാകാതിരിക്കാൻ എല്ലാ സാധ്യതയുള്ള വേരിയബിളുകളും മാപ്പ് ചെയ്യുന്നു
+                    // Multiple parameters to ensure no "recipients address is empty" issues
                     const templateParams = {
                         name: uName,
                         user_email: uEmail,
@@ -682,7 +684,6 @@
 
                     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
                     .then(() => {
-                        otpVerificationArea.style.display = 'block'; 
                         sendOtpBtn.innerText = "OTP Sent!";
                         errBox.style.color = "green"; errBox.innerText = "OTP successfully sent to your email!"; errBox.style.display = 'block';
                     }, (error) => {
@@ -703,7 +704,10 @@
             const errBox = document.getElementById('signup-error-message');
             const verifyBtn = document.getElementById('signup-btn-verify-otp');
 
+            if(!uName || !uEmail || !pWord) { errBox.style.color = "red"; errBox.innerText = "Please fill credentials first!"; errBox.style.display = 'block'; return; }
             if (!userEnteredOtp) { errBox.style.color = "red"; errBox.innerText = "Please enter the OTP!"; errBox.style.display = 'block'; return; }
+
+            if (generatedOTP === "") { errBox.style.color = "red"; errBox.innerText = "Please click 'Send OTP' first!"; errBox.style.display = 'block'; return; }
 
             if (userEnteredOtp === generatedOTP) {
                 verifyBtn.disabled = true; verifyBtn.innerText = "Creating Account...";
@@ -732,7 +736,7 @@
             database.ref('users/' + uName).once('value', (snapshot) => {
                 if(snapshot.exists() && snapshot.val().password === pWord) {
                     currentUser = uName; localStorage.setItem('chat_session_user', currentUser);
-                    authContainer.style.display = 'none'; mainChatChainLayout = 'flex'; mainChatContainer.style.display = 'flex';
+                    authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
                     document.getElementById('current-logged-user').innerText = currentUser;
                     setUserActiveStatus(true); loadChattedUsersList();
                 } else { errBox.innerText = "Invalid Login!"; errBox.style.display = 'block'; }
@@ -830,7 +834,6 @@
             database.ref('chats/' + chatId).once('value', (snapshot) => { snapshot.forEach((childSnapshot) => { const key = childSnapshot.key; if (childSnapshot.val().sender === otherUser && childSnapshot.val().read === false) { database.ref('chats/' + chatId + '/' + key).update({ read: true }); } }); });
         }
 
-        // Messages Box with double tick and Delete Support
         function loadMessages() {
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
             database.ref('chats/' + chatId).off();
@@ -858,7 +861,6 @@
             });
         }
 
-        // Delete Message
         function deleteMessage(chatId, msgKey) { if (confirm("Do you want to delete this message?")) { database.ref('chats/' + chatId + '/' + msgKey).update({ text: "This message was deleted", deleted: true }); } }
 
         document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
