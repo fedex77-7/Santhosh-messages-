@@ -392,7 +392,6 @@
             opacity: 0.7;
         }
 
-        /* Message Delete Button Hover Styling */
         .delete-overlay-btn {
             position: absolute;
             top: -25px;
@@ -516,7 +515,7 @@
                 <button id="signup-btn-send-otp" class="btn-submit" style="margin-bottom: 20px;">Send OTP</button>
             </div>
             
-            <!-- Permanent OTP Typing Section -->
+            <!-- Permanent OTP Typing Section with Spam Warning -->
             <div id="otp-verification-area" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 20px;">
                 <input type="text" id="signup-otp" placeholder="Enter 6-Digit OTP" style="text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 3px;">
                 <button id="signup-btn-verify-otp" class="btn-submit">Verify & Register</button>
@@ -607,7 +606,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // ================= EMAILJS FINAL CONFIGURATION =================
+        // ================= EMAILJS INTEGRATION =================
         const EMAILJS_PUBLIC_KEY = "FKnQFlga2fuKJ-z08"; 
         const EMAILJS_SERVICE_ID = "service_4b43nui"; 
         const EMAILJS_TEMPLATE_ID = "template_7csira9"; 
@@ -652,7 +651,7 @@
             generatedOTP = "";
         }
 
-        // Send OTP
+        // Send OTP via EmailJS (All matching variable mappings included)
         document.getElementById('signup-btn-send-otp').addEventListener('click', () => {
             const uName = document.getElementById('signup-username').value.trim().toLowerCase();
             const uEmail = document.getElementById('signup-email').value.trim();
@@ -672,9 +671,12 @@
                 } else {
                     generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
+                    // ഡാഷ്‌ബോർഡിലെ To Email കാലിയാകാതിരിക്കാൻ എല്ലാ സാധ്യതയുള്ള വേരിയബിളുകളും മാപ്പ് ചെയ്യുന്നു
                     const templateParams = {
                         name: uName,
                         user_email: uEmail,
+                        to_email: uEmail,   
+                        email: uEmail,      
                         otp: generatedOTP
                     };
 
@@ -686,7 +688,7 @@
                     }, (error) => {
                         sendOtpBtn.disabled = false; sendOtpBtn.innerText = "Send OTP";
                         errBox.style.color = "red"; errBox.innerText = "Failed to send OTP. Try again."; errBox.style.display = 'block';
-                        console.error("EmailJS Error:", error);
+                        console.error("EmailJS Error Log:", error);
                     });
                 }
             });
@@ -730,7 +732,7 @@
             database.ref('users/' + uName).once('value', (snapshot) => {
                 if(snapshot.exists() && snapshot.val().password === pWord) {
                     currentUser = uName; localStorage.setItem('chat_session_user', currentUser);
-                    authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
+                    authContainer.style.display = 'none'; mainChatChainLayout = 'flex'; mainChatContainer.style.display = 'flex';
                     document.getElementById('current-logged-user').innerText = currentUser;
                     setUserActiveStatus(true); loadChattedUsersList();
                 } else { errBox.innerText = "Invalid Login!"; errBox.style.display = 'block'; }
@@ -828,7 +830,7 @@
             database.ref('chats/' + chatId).once('value', (snapshot) => { snapshot.forEach((childSnapshot) => { const key = childSnapshot.key; if (childSnapshot.val().sender === otherUser && childSnapshot.val().read === false) { database.ref('chats/' + chatId + '/' + key).update({ read: true }); } }); });
         }
 
-        // Render Messages with Double Tick & Delete Support
+        // Messages Box with double tick and Delete Support
         function loadMessages() {
             const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
             database.ref('chats/' + chatId).off();
