@@ -516,7 +516,7 @@
                 <button id="signup-btn-send-otp" class="btn-submit" style="margin-bottom: 20px;">Send OTP</button>
             </div>
             
-            <!-- [CHANGED] Permanent OTP Input with Spam Warnings -->
+            <!-- Permanent OTP Input with Spam Warnings -->
             <div id="otp-verification-area" style="border-top: 1px dashed var(--border-color); padding-top: 20px;">
                 <input type="text" id="signup-otp" placeholder="Enter 6-Digit OTP" style="text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 3px;">
                 <button id="signup-btn-verify-otp" class="btn-submit">Verify & Register</button>
@@ -632,9 +632,17 @@
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('chat_session_user');
             if (savedUser) {
-                currentUser = savedUser; authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
-                document.getElementById('current-logged-user').innerText = currentUser;
-                setUserActiveStatus(true); loadChattedUsersList();
+                // ലോക്കൽ സെഷൻ ഉണ്ടെങ്കിലും റിയൽ-ടൈം ആയി ബാൻ സ്റ്റാറ്റസ് ചെക്ക് ചെയ്യുന്നു
+                database.ref('users/' + savedUser).once('value', (snapshot) => {
+                    if (snapshot.exists() && snapshot.val().banned === true) {
+                        localStorage.removeItem('chat_session_user');
+                        alert("Your account has been BANNED by Admin!");
+                        return;
+                    }
+                    currentUser = savedUser; authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
+                    document.getElementById('current-logged-user').innerText = currentUser;
+                    setUserActiveStatus(true); loadChattedUsersList();
+                });
             }
         });
 
@@ -644,7 +652,6 @@
         document.getElementById('go-to-signup').addEventListener('click', (e) => { e.preventDefault(); loginSection.style.display = 'none'; signupSection.style.display = 'block'; resetSignupForm(); });
         document.getElementById('go-to-login').addEventListener('click', (e) => { e.preventDefault(); signupSection.style.display = 'none'; loginSection.style.display = 'block'; resetSignupForm(); });
 
-        // [CHANGED] Permanent OTP section handling
         function resetSignupForm() {
             document.getElementById('signup-username').value = ""; document.getElementById('signup-email').value = ""; document.getElementById('signup-password').value = "";
             document.getElementById('signup-otp').value = "";
@@ -673,13 +680,15 @@
                 } else {
                     generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
-                    // Multiple parameters to ensure no "recipients address is empty" issues
                     const templateParams = {
                         name: uName,
+                        user_name: uName,
                         user_email: uEmail,
                         to_email: uEmail,   
                         email: uEmail,      
-                        otp: generatedOTP
+                        otp: generatedOTP,
+                        otp_code: generatedOTP,
+                        code: generatedOTP
                     };
 
                     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
@@ -713,7 +722,7 @@
                 verifyBtn.disabled = true; verifyBtn.innerText = "Creating Account...";
 
                 database.ref('users/' + uName).set({ 
-                    password: pWord, email: uEmail, online: false, lastSeen: Date.now() 
+                    password: pWord, email: uEmail, online: false, lastSeen: Date.now(), banned: false 
                 })
                 .then(() => {
                     alert("Registration Successful!"); resetSignupForm();
@@ -727,7 +736,7 @@
             }
         });
 
-        // Login
+        // Login Section with Admin Banned Connect Validation
         document.getElementById('login-btn-submit').addEventListener('click', () => {
             const uName = document.getElementById('login-username').value.trim().toLowerCase();
             const pWord = document.getElementById('login-password').value.trim();
@@ -735,6 +744,14 @@
 
             database.ref('users/' + uName).once('value', (snapshot) => {
                 if(snapshot.exists() && snapshot.val().password === pWord) {
+                    
+                    // [CONNECTED TO ADMIN PANEL] ബാൻ ചെയ്ത യൂസർ ആണോ എന്ന് പരിശോധിക്കുന്നു
+                    if(snapshot.val().banned === true) {
+                        errBox.innerText = "Your account has been BANNED by Admin!";
+                        errBox.style.display = 'block';
+                        return;
+                    }
+                    
                     currentUser = uName; localStorage.setItem('chat_session_user', currentUser);
                     authContainer.style.display = 'none'; mainChatContainer.style.display = 'flex';
                     document.getElementById('current-logged-user').innerText = currentUser;
@@ -798,9 +815,11 @@
             });
         }
 
+        // അഡ്മിൻ പാനലിലെ ലൈവ് ബാൻ മാറ്റങ്ങൾ വന്നാൽ ചാറ്റ് വിൻഡോയിലും കാണിക്കും
         function updateHeaderStatus(userObj) {
             const statusSpan = document.getElementById('chat-user-status');
-            if (userObj && userObj.online === true) { statusSpan.innerHTML = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-circle" style="font-size:6px;"></i> Active now</span>`; }
+            if (userObj && userObj.banned === true) { statusSpan.innerHTML = `<span style="color:#ef4444; font-weight:600;">Account Banned</span>`; }
+            else if (userObj && userObj.online === true) { statusSpan.innerHTML = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-circle" style="font-size:6px;"></i> Active now</span>`; }
             else if (userObj && userObj.lastSeen) { statusSpan.innerText = "Last active " + formatTime(userObj.lastSeen); }
             else { statusSpan.innerText = "Offline"; }
         }
@@ -868,8 +887,17 @@
 
         function sendMessage() {
             const inputField = document.getElementById('chat-message-input'); const text = inputField.value.trim(); if(!text || !selectedUser) return;
-            const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
-            database.ref('chats/' + chatId).push({ sender: currentUser, text: text, timestamp: Date.now(), read: false, deleted: false }).then(() => { inputField.value = ""; inputField.focus(); });
+            
+            // മെസ്സേജ് അയക്കുന്നതിന് മുൻപ് ഇയാൾ ബാൻ ചെയ്യപ്പെട്ടിട്ടുണ്ടോ എന്ന് ഒരു തവണ കൂടി ഉറപ്പാക്കുന്നു
+            database.ref('users/' + currentUser).once('value', (snapshot) => {
+                if(snapshot.exists() && snapshot.val().banned === true) {
+                    alert("You cannot send messages because you are BANNED!");
+                    window.location.reload();
+                    return;
+                }
+                const chatId = currentUser < selectedUser ? currentUser + "_" + selectedUser : selectedUser + "_" + currentUser;
+                database.ref('chats/' + chatId).push({ sender: currentUser, text: text, timestamp: Date.now(), read: false, deleted: false }).then(() => { inputField.value = ""; inputField.focus(); });
+            });
         }
 
         function formatTime(timestamp) { const date = new Date(timestamp); let hours = date.getHours(); let minutes = date.getMinutes(); const ampm = hours >= 12 ? 'PM' : 'AM'; hours = hours % 12; hours = hours ? hours : 12; minutes = minutes < 10 ? '0' + minutes : minutes; return hours + ':' + minutes + ' ' + ampm; }
