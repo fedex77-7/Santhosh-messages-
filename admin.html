@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santhosh Message - Management Panel</title>
+    <title>Santhosh Message - Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -18,98 +18,63 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; padding: 20px; }
 
-        .auth-container { max-width: 400px; margin: 100px auto; padding: 30px; background: white; border-radius: 16px; box-shadow: var(--shadow); text-align: center; }
-        .auth-container h2 { margin-bottom: 20px; color: var(--accent-color); font-weight: 800; }
-        input { width: 100%; padding: 12px 16px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; }
+        .auth-container { max-width: 380px; margin: 80px auto; padding: 30px; background: white; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border-color); }
+        .auth-container h2 { margin-bottom: 8px; color: var(--accent-color); font-weight: 800; }
+        .auth-container p { font-size: 11px; color: var(--text-secondary); margin-bottom: 20px; font-weight: 700; letter-spacing: 1px; }
+        input { width: 100%; padding: 12px 16px; margin-bottom: 12px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; }
         button { width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        .dashboard { display: none; padding: 30px; max-width: 1200px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .role-badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .dashboard { display: none; max-width: 1100px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 20px; border-radius: 12px; box-shadow: var(--shadow); }
+        .role-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .role-developer { background: #e0f2fe; color: #0369a1; }
         .role-admin { background: #fef3c7; color: #b45309; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); }
-        .stat-card h3 { font-size: 14px; color: var(--text-secondary); margin-bottom: 5px; }
-        .stat-card p { font-size: 28px; font-weight: 800; color: var(--text-primary); }
-
-        .table-container { background: white; border-radius: 12px; box-shadow: var(--shadow); overflow-x: auto; padding: 20px; margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 14px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-        th { color: var(--text-secondary); font-weight: 600; }
+        .user-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .dev-box { background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-size: 13px; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
         
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
-        .badge.online { background: #d1fae5; color: #065f46; }
-        .badge.offline { background: #f1f5f9; color: #475569; }
-        .badge.banned { background: #fee2e2; color: #991b1b; }
+        .btn-action { padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; width: auto; display: inline-block; }
+        .btn-ban { background: #ef4444; color: white; } 
+        .btn-unban { background: #10b981; color: white; } 
+        .btn-hist { background: #38bdf8; color: #0f172a; margin-top: 8px; font-weight: 700; }
+        .btn-req { background: #f59e0b; color: white; }
 
-        .btn-action { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-block; }
-        .btn-ban { background: #ef4444; color: white; border: none; }
-        .btn-unban { background: #10b981; color: white; border: none; }
-        .btn-req { background: #f59e0b; color: white; border: none; }
-
-        .req-section { background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); display: none; margin-bottom: 30px; }
-        .req-list { margin-top: 15px; }
-        .req-item { padding: 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        
-        /* IP Columns hide dynamic classes */
-        .hide-ip { display: none !important; }
+        .req-section { background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .req-item { padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
-    <!-- AUTH SECTION -->
+    <!-- LOGIN SCREEN -->
     <div id="auth-screen" class="auth-container">
         <h2>Santhosh Message</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 13px;">Management Login</p>
+        <p>POWERED BY REXO INTERNATIONAL</p>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <p id="login-error" style="color: red; margin-top: 10px; font-size: 13px; display: none;">Invalid Login Credentials!</p>
+        <button onclick="login()">Login to Panel</button>
+        <p id="login-error" style="color: red; margin-top: 10px; font-size: 12px; display: none;">Invalid Credentials!</p>
     </div>
 
-    <!-- DASHBOARD SECTION -->
+    <!-- DASHBOARD SCREEN -->
     <div id="dashboard-screen" class="dashboard">
         <div class="header">
             <div>
-                <h1 style="font-size: 24px; font-weight: 800;">Management Dashboard</h1>
-                <span id="user-role-badge" class="role-badge">Role</span>
+                <h2 style="font-size: 20px;">Management Dashboard</h2>
+                <span id="role-tag" class="role-badge"></span>
             </div>
-            <button onclick="logout()" style="width: auto; background: #64748b; padding: 8px 16px;">Logout</button>
+            <button onclick="location.reload()" style="width: auto; background: #64748b; padding: 8px 16px;">Logout</button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card"><h3>Total Registered</h3><p id="stat-total">0</p></div>
-            <div class="stat-card"><h3>Active Online</h3><p id="stat-active">0</p></div>
-            <div class="stat-card"><h3>Banned Users</h3><p id="stat-banned">0</p></div>
+        <!-- Pending Ban Requests for Developer View -->
+        <div id="developer-req-box" class="req-section" style="display: none;">
+            <h3 style="color: #b45309; font-size: 15px;"><i class="fas fa-exclamation-triangle"></i> Ban Requests from Admin</h3>
+            <div id="req-list-container" style="margin-top: 10px;"></div>
         </div>
 
-        <!-- Ban Requests: Visible Only to Developer -->
-        <div id="developer-req-box" class="req-section">
-            <h3 style="color: #b45309;"><i class="fas fa-exclamation-triangle"></i> Pending Ban Requests from Admin</h3>
-            <div id="req-list-container" class="req-list"></div>
-        </div>
-
-        <!-- User Management Table -->
-        <div class="table-container">
-            <h3 style="margin-bottom: 15px; font-size: 16px; font-weight: 700;">User Database</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th id="th-ip">IP Address</th>
-                        <th>Last Seen</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="user-table-body"></tbody>
-            </table>
-        </div>
+        <h3 style="margin-bottom: 15px; font-size: 16px;">Registered Users Database</h3>
+        <div id="users-list-container"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -134,93 +99,83 @@
             const p = document.getElementById('password').value.trim();
             const err = document.getElementById('login-error');
 
-            // NEW POWERFUL DEVELOPER CREDENTIALS
             if (u === "dev_master_santhosh_99" && p === "Secured#Dev@2026!X") {
-                currentRole = "developer";
-                startDashboard();
+                currentRole = "developer"; startDashboard();
             } else if (u === "adminsanthoshmsg@123" && p === "adminanson@1234") {
-                currentRole = "admin";
-                startDashboard();
-            } else {
-                err.style.display = "block";
-            }
+                currentRole = "admin"; startDashboard();
+            } else { err.style.display = "block"; }
         }
 
         function startDashboard() {
             document.getElementById('auth-screen').style.display = "none";
             document.getElementById('dashboard-screen').style.display = "block";
             
-            const badge = document.getElementById('user-role-badge');
-            badge.innerText = currentRole;
-            badge.className = "role-badge " + (currentRole === 'developer' ? 'role-developer' : 'role-admin');
+            const tag = document.getElementById('role-tag');
+            tag.innerText = currentRole.toUpperCase();
+            tag.className = "role-badge " + (currentRole === 'developer' ? 'role-developer' : 'role-admin');
 
-            const thIp = document.getElementById('th-ip');
             if (currentRole === 'developer') {
                 document.getElementById('developer-req-box').style.display = "block";
-                thIp.classList.remove('hide-ip');
                 listenToBanRequests();
-            } else {
-                document.getElementById('developer-req-box').style.display = "none";
-                thIp.classList.add('hide-ip'); // Admin കാണുമ്പോൾ IP Column ഹെഡർ മറയ്ക്കുന്നു
             }
 
-            loadUsersData();
+            loadUsers();
         }
 
-        function loadUsersData() {
+        function loadUsers() {
             database.ref('users').on('value', (snapshot) => {
-                const tbody = document.getElementById('user-table-body');
-                tbody.innerHTML = "";
-                let total = 0, active = 0, banned = 0;
+                const box = document.getElementById('users-list-container'); 
+                box.innerHTML = "";
 
                 snapshot.forEach((child) => {
-                    total++;
-                    const user = child.val();
-                    const uName = child.key;
-
-                    if (user.online === true) active++;
-                    if (user.banned === true) banned++;
-
-                    let statusBadge = `<span class="badge offline">Offline</span>`;
-                    if (user.banned === true) statusBadge = `<span class="badge banned">Banned</span>`;
-                    else if (user.online === true) statusBadge = `<span class="badge online">Online</span>`;
+                    const name = child.key; 
+                    const u = child.val();
+                    const card = document.createElement('div');
+                    card.className = "user-card";
 
                     let actionBtn = "";
                     if (currentRole === 'developer') {
-                        actionBtn = user.banned === true ? 
-                            `<button class="btn-action btn-unban" onclick="toggleBan('${uName}', false)">Unban</button>` :
-                            `<button class="btn-action btn-ban" onclick="toggleBan('${uName}', true)">Ban</button>`;
+                        actionBtn = u.banned ? 
+                            `<button class="btn-action btn-unban" onclick="toggleBan('${name}', false)">Unban</button>` :
+                            `<button class="btn-action btn-ban" onclick="toggleBan('${name}', true)">Ban User</button>`;
                     } else {
-                        actionBtn = user.banned === true ? 
-                            `<span style="color:red; font-weight:600; font-size:12px;">Banned</span>` :
-                            `<button class="btn-action btn-req" onclick="sendBanRequest('${uName}', '${user.ip || 'N/A'}')">Request Ban</button>`;
+                        actionBtn = u.banned ? 
+                            `<span style="color:red; font-weight:700; font-size:12px;">BANNED</span>` :
+                            `<button class="btn-action btn-req" onclick="sendBanRequest('${name}', '${u.lastIP || 'N/A'}')">Request Ban</button>`;
                     }
 
-                    // IP display logic based on role
-                    let ipContent = currentRole === 'developer' ? (user.ip || 'No IP') : '';
-                    let ipClass = currentRole === 'developer' ? '' : 'hide-ip';
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="font-weight:600;">${uName}</td>
-                        <td>${user.email || 'N/A'}</td>
-                        <td class="${ipClass}">${ipContent}</td>
-                        <td>${new Date(user.lastSeen).toLocaleString()}</td>
-                        <td>${statusBadge}</td>
-                        <td>${actionBtn}</td>
+                    let content = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong style="font-size:16px;">${name}</strong> 
+                                <span style="font-size:12px; color:var(--text-secondary); margin-left:8px;">(${u.email || 'No Email'})</span>
+                            </div>
+                            <div>${actionBtn}</div>
+                        </div>
                     `;
-                    tbody.appendChild(row);
-                });
 
-                document.getElementById('stat-total').innerText = total;
-                document.getElementById('stat-active').innerText = active;
-                document.getElementById('stat-banned').innerText = banned;
+                    // ഡെവലപ്പർ ആണെങ്കിൽ മാത്രം IP, ISP, Browser, Login History കാണിക്കും
+                    if (currentRole === 'developer') {
+                        content += `
+                            <div class="dev-box">
+                                <div><strong style="color:#38bdf8;">🌐 IP Address:</strong> ${u.lastIP || 'N/A'}</div>
+                                <div><strong style="color:#38bdf8;">📡 Internet Provider (ISP):</strong> ${u.lastISP || 'N/A'}</div>
+                                <div><strong style="color:#38bdf8;">💻 Browser Agent:</strong> ${u.lastBrowser || 'N/A'}</div>
+                                <div><strong style="color:#38bdf8;">🕒 Last Seen:</strong> ${new Date(u.lastSeen).toLocaleString()}</div>
+                                <button class="btn-action btn-hist" onclick="viewHistory('${name}')">View Full Login History</button>
+                            </div>
+                        `;
+                    }
+
+                    card.innerHTML = content;
+                    box.appendChild(card);
+                });
             });
         }
 
-        function toggleBan(username, status) {
-            database.ref('users/' + username).update({ banned: status });
-            if (!status) database.ref('ban_requests/' + username).remove();
+        function toggleBan(user, status) {
+            database.ref('users/' + user).update({ banned: status });
+            if (!status) database.ref('ban_requests/' + user).remove();
         }
 
         function sendBanRequest(username, ip) {
@@ -230,7 +185,7 @@
                 requestedBy: "Admin Santhosh",
                 timestamp: Date.now()
             }).then(() => {
-                alert("Ban request submitted to Developer successfully!");
+                alert("Ban request sent to Developer!");
             });
         }
 
@@ -240,7 +195,7 @@
                 reqContainer.innerHTML = "";
                 
                 if(!snapshot.exists()) {
-                    reqContainer.innerHTML = "<p style='font-size:13px; color:var(--text-secondary);'>No pending requests.</p>";
+                    reqContainer.innerHTML = "<p style='font-size:12px; color:var(--text-secondary);'>No pending requests.</p>";
                     return;
                 }
 
@@ -250,16 +205,26 @@
                     item.className = "req-item";
                     item.innerHTML = `
                         <div style="font-size:13px;">
-                            <strong>User:</strong> ${req.username} | <strong>IP Address:</strong> <span style="color:#ef4444; font-weight:700;">${req.ip}</span>
+                            <strong>User:</strong> ${req.username} | <strong>IP:</strong> <span style="color:#ef4444; font-weight:700;">${req.ip}</span>
                         </div>
-                        <button class="btn-action btn-ban" style="width:auto;" onclick="toggleBan('${req.username}', true)">Approve & Ban</button>
+                        <button class="btn-action btn-ban" onclick="toggleBan('${req.username}', true)">Approve Ban</button>
                     `;
                     reqContainer.appendChild(item);
                 });
             });
         }
 
-        function logout() { location.reload(); }
+        function viewHistory(user) {
+            database.ref('loginHistory/' + user).once('value', (snapshot) => {
+                if(!snapshot.exists()) { alert("No login history available."); return; }
+                let logs = `--- LOGIN HISTORY FOR: ${user} ---\n\n`;
+                snapshot.forEach((item) => {
+                    const d = item.val();
+                    logs += `[${new Date(d.timestamp).toLocaleString()}] ${d.type}\nIP: ${d.ip}\nISP: ${d.isp}\nBrowser: ${d.browser}\n\n`;
+                });
+                alert(logs);
+            });
+        }
     </script>
 </body>
 </html>
